@@ -1,0 +1,8 @@
+// File: hooks/useInventoryReceivedData.js
+import { useContext } from 'react';
+import { InventoryContext } from './InventoryContext.js';
+
+export const useInventoryReceivedData = () => {
+  const { rowData } = useContext(InventoryContext);
+  return rowData || [];
+};

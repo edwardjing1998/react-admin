@@ -1,0 +1,49 @@
+/* Change cursor to pointer for pagination buttons */
+.pagination-button {
+  cursor: pointer;
+}
+
+.table-row {
+  cursor: pointer;
+  &:hover {
+    background-color: #f1f1f1;
+  }
+}
+
+.light-violet-label {
+  background-color: lavender;
+  padding: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  width: auto;
+}
+
+// Reduce font size in the table
+.table {
+  font-size: 16px; // Adjust as needed
+}
+
+.table-header {
+  font-size: 16px; // Smaller headers if needed
+}
+
+.table-row {
+  font-size: 15px; // Adjust row text size
+}
+
+.client-active-row label {
+  background-color: #E6E6FA; /* Light Violet */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+

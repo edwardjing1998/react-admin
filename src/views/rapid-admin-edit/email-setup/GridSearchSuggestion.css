@@ -1,0 +1,12 @@
+.ag-theme-custom {
+    --ag-background-color: white;
+    --ag-header-background-color: #f0f0f0;
+    --ag-odd-row-background-color: #fafafa;
+    --ag-border-color: #ccc;
+    height: 300px;
+    width: 600px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid #ccc;
+  }
+  

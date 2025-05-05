@@ -1,0 +1,36 @@
+.d-flex {
+    display: flex;
+  }
+  
+  .justify-content-start {
+    justify-content: flex-start; /* Align left */
+  }
+  
+  .justify-content-end {
+    justify-content: flex-end; /* Align right */
+  }
+  
+  .w-100 {
+    width: 100% !important; /* Ensure full width inside CCol */
+  }
+
+/* Prevent heavy background color when button is clicked */
+.no-click-effect {
+    transition: none !important; /* Disable transitions */
+  }
+  
+  .no-click-effect:active, 
+  .no-click-effect:focus, 
+  .no-click-effect:focus-visible {
+    background-color: transparent !important; 
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  
+  /* Optional: Remove click delay on mobile */
+  .no-click-effect:active {
+    pointer-events: none !important;
+  }
+
+  
+  
