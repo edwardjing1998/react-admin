@@ -798,29 +798,19 @@ export default SysPrinConfigs;
 
 */}
  
+// --- Updated SysPrinConfigs.js ---
+
 import React, { useState, useRef, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import './SysPrinConfigs.css';
-import { useClientContext } from '../../../context/ClientContext.js';
 import SysPrinGeneral from './SysPrinGeneral';
 import ReMailOptions from './ReMailOptions';
 
-
 import {
   CCol,
-  CRow,
-  CFormCheck
+  CRow
 } from '@coreui/react';
-
-import {
-  Box,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
-} from '@mui/material';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -838,69 +828,11 @@ const flattenData = (data) => {
   return result;
 };
 
-const rowStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  height: '60px',
-};
-
-const colWithRightGap = {
-  display: 'flex',
-  alignItems: 'center',
-  height: '64px',
-  backgroundColor: 'white',
-  borderRight: '8px solid #f0f0f0'
-};
-
 const SysPrinConfigs = () => {
-
-
-  const handleRowClick = (event) => {
-    const { client, sysPrin } = event.data;
-    const matchedClient = clientList.find(c => c.client === client);
-  
-    if (!matchedClient) return;
-  
-    const matchedSysPrin = matchedClient.sysPrins?.find(sp => sp.sysPrin === sysPrin);
-  
-    if (!matchedSysPrin) return;
-  
-    setGeneralFormState({
-      custType: matchedSysPrin.custType || '',
-      destroyStatus: matchedSysPrin.destroyStatus || '',
-      returnStatus: matchedSysPrin.returnStatus || '',
-      special: matchedSysPrin.special || '',
-      pinMailer: matchedSysPrin.pinMailer || '',
-      active: matchedSysPrin.active ? 'Y' : 'N',
-      addrFlag: matchedSysPrin.addrFlag || '',
-      astatRch: matchedSysPrin.astatRch || '',
-      nm13: matchedSysPrin.nm13 || '',
-      rps: matchedSysPrin.rps || ''
-    });
-  
-    setFormState(prev => ({
-      ...prev,
-      holdDays: matchedSysPrin.holdDays?.toString() || '',
-      tempAway: matchedSysPrin.tempAway?.toString() || '',
-      tempAwayAtts: matchedSysPrin.tempAwayAtts?.toString() || '',
-      undeliverable: matchedSysPrin.undeliverable || '',
-      forwardingAddress: matchedSysPrin.forwardingAddress || '',
-      nonUS: matchedSysPrin.nonUS || '',
-      poBox: matchedSysPrin.poBox || '',
-      badState: matchedSysPrin.badState || '',
-      invalidDelivAreas: matchedSysPrin.invalidDelivAreas || []
-    }));
-  
-    setShowGrid(false);
-    setSearchText(`${matchedClient.name} - ${sysPrin}`);
-  };
-  
-
-  const { clientList = [] } = useClientContext();
-
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [showGrid, setShowGrid] = useState(false);
+  const [clientList, setClientList] = useState([]);
 
   const [generalFormState, setGeneralFormState] = useState({
     custType: '', destroyStatus: '', returnStatus: '', special: '', pinMailer: '',
@@ -913,9 +845,9 @@ const SysPrinConfigs = () => {
     active: '', addrFlag: '', astatRch: '', nm13: '', rps: '',
     holdDays: '', tempAway: '', tempAwayAtts: '', undeliverable: '', forwardingAddress: '',
     nonUS: '', poBox: '', badState: '',
-    invalidDelivAreas: [ { area: 'Los Angeles, CA 90001' } ] // optional placeholder
+    invalidDelivAreas: [ { area: 'Los Angeles, CA 90001' } ]
   });
-  
+
   const debounceTimer = useRef(null);
 
   const columnDefs = [
@@ -924,33 +856,83 @@ const SysPrinConfigs = () => {
     { field: 'sysPrin', headerName: 'SysPrin', flex: 1 },
   ];
 
+  const handleRowClick = (event) => {
+    const { client, sysPrin } = event.data;
+    const matchedClient = clientList.find(c => c.client === client);
+
+    if (!matchedClient) return;
+
+    const matchedSysPrin = matchedClient.sysPrins?.find(sp => sp.sysPrin === sysPrin);
+    if (!matchedSysPrin) return;
+
+    setGeneralFormState({
+      custType: matchedSysPrin.custType || '',
+      destroyStatus: matchedSysPrin.destroyStatus || '',
+      returnStatus: matchedSysPrin.returnStatus || '',
+      special: matchedSysPrin.special || '',
+      pinMailer: matchedSysPrin.pinMailer || '',
+      active: matchedSysPrin.active ? 'Y' : 'N',
+      addrFlag: matchedSysPrin.addrFlag || '',
+      astatRch: matchedSysPrin.astatRch || '',
+      nm13: matchedSysPrin.nm13 || '',
+      rps: matchedSysPrin.rps || ''
+    });
+
+    setFormState(prev => ({
+      ...prev,
+      holdDays: matchedSysPrin.holdDays?.toString() || '',
+      tempAway: matchedSysPrin.tempAway?.toString() || '',
+      tempAwayAtts: matchedSysPrin.tempAwayAtts?.toString() || '',
+      undeliverable: matchedSysPrin.undeliverable || '',
+      forwardingAddress: matchedSysPrin.forwardingAddress || '',
+      nonUS: matchedSysPrin.nonUS || '',
+      poBox: matchedSysPrin.poBox || '',
+      badState: matchedSysPrin.badState || '',
+      invalidDelivAreas: matchedSysPrin.invalidDelivAreas || []
+    }));
+
+    setShowGrid(false);
+    setSearchText(`Client ${matchedClient.client} (${matchedClient.name}) - SysPrin ${sysPrin} `);
+  };
+
   const handleInputChange = (e) => setSearchText(e.target.value);
 
   useEffect(() => {
     clearTimeout(debounceTimer.current);
     debounceTimer.current = setTimeout(() => {
       const trimmed = searchText.trim().toLowerCase();
-      if (!trimmed) {
+      if (trimmed.length < 3) {
         setFilteredData([]);
         setShowGrid(false);
-      } else {
-        const flat = flattenData(clientList);
-        const filtered = flat.filter(item =>
-          item.name?.toLowerCase().includes(trimmed) ||
-          item.sysPrin?.toLowerCase().includes(trimmed)
-        );
-        setFilteredData(filtered);
-        setShowGrid(filtered.length > 0);
+        return;
       }
+
+      fetch('http://localhost:4444/api/clients')
+        .then(res => res.json())
+        .then(data => {
+          setClientList(data);
+          const flat = flattenData(data);
+          const filtered = flat.filter(item =>
+            item.name?.toLowerCase().includes(trimmed) ||
+            item.sysPrin?.toLowerCase().includes(trimmed) ||
+            item.client?.toLowerCase().includes(trimmed) // 🔍 search by client ID too
+          );
+          console.log(`🔍 Search term: "${trimmed}" → Found ${filtered.length} matching sysPrins`);
+          setFilteredData(filtered);
+          setShowGrid(filtered.length > 0);
+        })
+        .catch(err => console.error('Error fetching client data:', err));
     }, 300);
+
     return () => clearTimeout(debounceTimer.current);
-  }, [searchText, clientList]);
+  }, [searchText]);
 
   return (
     <>
+      {/* Search row and result grid */}
       <CRow style={{ backgroundColor: '#007bff', padding: '4px 10px', color: 'white', alignItems: 'center' }}>
-        <CCol xs={2}><div style={{ fontWeight: 'bold' }}></div></CCol>
-        <CCol xs={2}><div style={{ fontWeight: 'bold' }}></div></CCol>
+        <CCol xs={2}></CCol>
+        <CCol xs={2}></CCol>
         <CCol xs={6}>
           <div style={{ position: 'relative', width: '100%' }}>
             <input
@@ -976,115 +958,31 @@ const SysPrinConfigs = () => {
             )}
           </div>
         </CCol>
-        <CCol xs={2}><div style={{ fontWeight: 'bold' }}></div></CCol>
+        <CCol xs={2}></CCol>
       </CRow>
 
-      <CRow
-          className="mt-3"
-          style={{
-            backgroundColor: 'white',
-            alignItems: 'stretch',
-            minHeight: '36px',
-          }}
-        >
-          <CCol
-            xs={7}
-            style={{
-              paddingRight: '16px',
-              borderRight: '12px solid #f0f0f0', // Right gray vertical separator
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
-              General Information
-            </div>
-          </CCol>
-
-          <CCol
-            xs={5}
-            style={{
-              paddingLeft: '16px',
-              borderLeft: '12px solid #f0f0f0', // Left gray vertical separator
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
-              Re-Mail Options
-            </div>
-          </CCol>
+      {/* Section Labels */}
+      <CRow className="mt-3" style={{ backgroundColor: 'white', alignItems: 'stretch', minHeight: '36px' }}>
+        <CCol xs={7} style={{ paddingRight: '16px', borderRight: '12px solid #f0f0f0', display: 'flex', alignItems: 'center' }}>
+          <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>General Information</div>
+        </CCol>
+        <CCol xs={5} style={{ paddingLeft: '16px', borderLeft: '12px solid #f0f0f0', display: 'flex', alignItems: 'center' }}>
+          <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>Re-Mail Options</div>
+        </CCol>
       </CRow>
 
+      {/* Form Sections */}
       <CRow className="mt-3">
         <CCol xs={7}>
-          <SysPrinGeneral
-            custType={generalFormState.custType}
-            setCustType={(val) => setGeneralFormState(prev => ({ ...prev, custType: val }))}
-
-            returnStatus={generalFormState.returnStatus}
-            setReturnStatus={(val) => setGeneralFormState(prev => ({ ...prev, returnStatus: val }))}
-
-            destroyStatus={generalFormState.destroyStatus}
-            setDestroyStatus={(val) => setGeneralFormState(prev => ({ ...prev, destroyStatus: val }))}
-
-            special={generalFormState.special}
-            setSpecial={(val) => setGeneralFormState(prev => ({ ...prev, special: val }))}
-
-            pinMailer={generalFormState.pinMailer}
-            setPinMailer={(val) => setGeneralFormState(prev => ({ ...prev, pinMailer: val }))}
-
-            active={generalFormState.active}
-            setActive={(val) => setGeneralFormState(prev => ({ ...prev, active: val }))}
-
-            addrFlag={generalFormState.addrFlag}
-            setAddrFlag={(val) => setGeneralFormState(prev => ({ ...prev, addrFlag: val }))}
-
-            astatRch={generalFormState.astatRch}
-            setAstatRch={(val) => setGeneralFormState(prev => ({ ...prev, astatRch: val }))}
-
-            nm13={generalFormState.nm13}
-            setNm13={(val) => setGeneralFormState(prev => ({ ...prev, nm13: val }))}
-
-            rps={generalFormState.rps}
-            setRps={(val) => setGeneralFormState(prev => ({ ...prev, rps: val }))}
-          />
+          <SysPrinGeneral {...generalFormState} setCustType={(val) => setGeneralFormState(prev => ({ ...prev, custType: val }))} setReturnStatus={(val) => setGeneralFormState(prev => ({ ...prev, returnStatus: val }))} setDestroyStatus={(val) => setGeneralFormState(prev => ({ ...prev, destroyStatus: val }))} setSpecial={(val) => setGeneralFormState(prev => ({ ...prev, special: val }))} setPinMailer={(val) => setGeneralFormState(prev => ({ ...prev, pinMailer: val }))} setActive={(val) => setGeneralFormState(prev => ({ ...prev, active: val }))} setAddrFlag={(val) => setGeneralFormState(prev => ({ ...prev, addrFlag: val }))} setAstatRch={(val) => setGeneralFormState(prev => ({ ...prev, astatRch: val }))} setNm13={(val) => setGeneralFormState(prev => ({ ...prev, nm13: val }))} setRps={(val) => setGeneralFormState(prev => ({ ...prev, rps: val }))} />
         </CCol>
-
         <CCol xs={5}>
-          <ReMailOptions
-            nonUS={formState.nonUS}
-            setNonUS={(val) => setFormState(prev => ({ ...prev, nonUS: val }))}
-
-            poBox={formState.poBox}
-            setPoBox={(val) => setFormState(prev => ({ ...prev, poBox: val }))}
-
-            badState={formState.badState}
-            setBadState={(val) => setFormState(prev => ({ ...prev, badState: val }))}
-
-            tempAwayAtts={formState.tempAwayAtts}
-            setTempAwayAtts={(val) => setFormState(prev => ({ ...prev, tempAwayAtts: val }))}
-
-            tempAway={formState.tempAway}
-            setTempAway={(val) => setFormState(prev => ({ ...prev, tempAway: val }))}
-
-            holdDays={formState.holdDays}
-            setHoldDays={(val) => setFormState(prev => ({ ...prev, holdDays: val }))}
-
-            undeliverable={formState.undeliverable}
-            setUndeliverable={(val) => setFormState(prev => ({ ...prev, undeliverable: val }))}
-
-            forwardingAddress={formState.forwardingAddress}
-            setForwardingAddress={(val) => setFormState(prev => ({ ...prev, forwardingAddress: val }))}
-
-            invalidDelivAreas={formState.invalidDelivAreas}
-            setInvalidDelivAreas={(val) => setFormState(prev => ({ ...prev, invalidDelivAreas: val }))}
-          />
+          <ReMailOptions {...formState} setNonUS={(val) => setFormState(prev => ({ ...prev, nonUS: val }))} setPoBox={(val) => setFormState(prev => ({ ...prev, poBox: val }))} setBadState={(val) => setFormState(prev => ({ ...prev, badState: val }))} setTempAwayAtts={(val) => setFormState(prev => ({ ...prev, tempAwayAtts: val }))} setTempAway={(val) => setFormState(prev => ({ ...prev, tempAway: val }))} setHoldDays={(val) => setFormState(prev => ({ ...prev, holdDays: val }))} setUndeliverable={(val) => setFormState(prev => ({ ...prev, undeliverable: val }))} setForwardingAddress={(val) => setFormState(prev => ({ ...prev, forwardingAddress: val }))} setInvalidDelivAreas={(val) => setFormState(prev => ({ ...prev, invalidDelivAreas: val }))} />
         </CCol>
-
-      </CRow>  
+      </CRow>
     </>
   );
 };
 
 export default SysPrinConfigs;
+

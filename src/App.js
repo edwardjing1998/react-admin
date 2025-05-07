@@ -21,8 +21,7 @@ const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
   const storedTheme = useSelector((state) => state.theme)
 
-  // initialize 
-  localStorage.setItem("selectedClient", ""); // Save to localStorage  
+  // localStorage.setItem("selectedClient", ""); 
 
 
 

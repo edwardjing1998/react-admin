@@ -1,5 +1,4 @@
-// File: ClientInformationPanel.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   CRow,
   CCol,
@@ -15,8 +14,6 @@ import {
 import { Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useClientContext } from '../../../context/ClientContext.js';
-
 
 import ClientSearchInput from './ClientSearchInput';
 import ClientInformationA from './ClientInformationA';
@@ -32,33 +29,20 @@ import ClientInformationB from './ClientInformationB.js';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const ClientInformationPanel = () => {
-  const [sampleClients, setSampleClients] = useState([]);
-  const { clientList } = useClientContext();
-  
+  const [clientList, setClientList] = useState([]);
   const [selectedData, setSelectedData] = useState({
-    client: '',
-    name: '',
-    addr: '',
-    city: '',
-    state: '',
-    zip: '',
-    contact: '',
-    phone: '',
-    active: false,
-    faxNumber: '',
-    billingSp: '',
-    reportBreakFlag: '',      // dropdown 1
-    chLookUpType: '',         // dropdown 2
-    excludeFromReport: false,
-    positiveReports: false,   // checkbox 2
-    subClientInd: false,      // checkbox 3
-    subClientXref: '',
-    amexIssued: false,        // checkbox 4
-    sysPrinsPrefixes: [],
-    reportOptions: [],
-    clientEmail: [],
+    client: '', name: '', addr: '', city: '', state: '', zip: '', contact: '', phone: '',
+    active: false, faxNumber: '', billingSp: '', reportBreakFlag: '', chLookUpType: '',
+    excludeFromReport: false, positiveReports: false, subClientInd: false, subClientXref: '',
+    amexIssued: false, sysPrinsPrefixes: [], reportOptions: [], clientEmail: [],
   });
-  
+
+  const [input, setInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const isSmallScreen = useMediaQuery('(max-width: 1024px)');
+  const [isEditable, setIsEditable] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState('');
+
   const handleNewClientClick = async () => {
     try {
       const response = await fetch('http://localhost:4444/api/client/save', {
@@ -68,7 +52,6 @@ const ClientInformationPanel = () => {
       });
 
       if (!response.ok) throw new Error('Failed to save client data');
-
       const result = await response.json();
       console.log('✅ Client saved successfully:', result);
       alert('✅ Client saved successfully!');
@@ -78,70 +61,45 @@ const ClientInformationPanel = () => {
     }
   };
 
-  const [input, setInput] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-
-  const isSmallScreen = useMediaQuery('(max-width: 1024px)');
-
-  const handleDeleteClick = () => {
-    alert('Delete button clicked');
-  };
-
-  const [isEditable, setIsEditable] = useState(false);
-  const [selectedEmail, setSelectedEmail] = useState('');
-
-
   const handleClearClick = () => {
     setSelectedData({
-      client: '',
-      name: '',
-      addr: '',
-      city: '',
-      state: '',
-      zip: '',
-      contact: '',
-      phone: '',
-      active: false,
-      faxNumber: '',
-      billingSp: '',
-      reportBreakFlag: '',
-      chLookUpType: '',
-      excludeFromReport: false,
-      positiveReports: false,
-      subClientInd: false,
-      subClientXref: '',
-      amexIssued: false,
-      sysPrinsPrefixes: [],
-      reportOptions: [],
-      clientEmail: [],
+      client: '', name: '', addr: '', city: '', state: '', zip: '', contact: '', phone: '',
+      active: false, faxNumber: '', billingSp: '', reportBreakFlag: '', chLookUpType: '',
+      excludeFromReport: false, positiveReports: false, subClientInd: false, subClientXref: '',
+      amexIssued: false, sysPrinsPrefixes: [], reportOptions: [], clientEmail: [],
     });
-    setIsEditable(true);  // 🟢 Allow editing
-    setInput('');         // 🧹 Clear search input
-    setSuggestions([]);   // 🔍 Clear suggestion list
-    setIsEditable(true);  // 🟢 Make form editable
-    setIsEditable(true);     // Enable form editing
-    setSelectedEmail('');    // ✅ Clear the selected email field
+    setIsEditable(true);
+    setInput('');
+    setSuggestions([]);
+    setSelectedEmail('');
   };
-  
-  const handleChange = (e) => {
+
+  const handleChange = async (e) => {
     const value = e.target.value;
     setInput(value);
 
-    if (value.length === 0) {
+    if (value.length < 2) {
       setSuggestions([]);
       return;
     }
-
-    const filtered = sampleClients.filter((email) =>
-      email.toLowerCase().includes(value.toLowerCase())
-    );
-    setSuggestions(filtered);
+    
+    try {
+      const res = await fetch('http://localhost:4444/api/clients');
+      const data = await res.json();
+      setClientList(data);
+      const matches = data.filter(c =>
+        c.client?.toLowerCase().includes(value.toLowerCase()) ||
+        c.name?.toLowerCase().includes(value.toLowerCase())
+      ).map(c => `${c.client} ${c.name}`);
+      setSuggestions(matches);
+    } catch (err) {
+      console.error('❌ Error fetching client data:', err);
+    }
   };
 
   const handleSelect = (label) => {
     setInput(label);
     setSuggestions([]);
-
     const matched = clientList.find(c => `${c.client} ${c.name}` === label);
     if (matched) {
       setSelectedData(matched);
@@ -149,12 +107,9 @@ const ClientInformationPanel = () => {
     }
   };
 
-  useEffect(() => {
-    if (clientList && clientList.length > 0) {
-      const combined = clientList.map((c) => `${c.client} ${c.name}`);
-      setSampleClients(combined);
-    }
-  }, [clientList]);
+  const handleDeleteClick = () => {
+    alert('Delete button clicked');
+  };
 
   const handleRowClick = (rowData) => {
     const billingSp = rowData.billingSp || '';

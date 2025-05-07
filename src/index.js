@@ -6,12 +6,13 @@ import 'core-js'
 
 import App from './App'
 import store from './store'
-import { ClientProvider } from './context/ClientContext' // 🧠 Make sure this path matches your file structure
+// import { ClientProvider } from './context/ClientContext'
+// import { preloadClients } from './startup/init';
+
+// preloadClients();
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <ClientProvider>
       <App />
-    </ClientProvider>
   </Provider>
 )
