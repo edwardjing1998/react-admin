@@ -1,105 +1,133 @@
-// File: SysPrinConfigs.js
-import React, { useState, useRef, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import './GridSearchSuggestion.css';
-import { useClientContext } from '../../../context/ClientContext.js';
+import React, { useState } from 'react'
+import {
+  CCard,
+  CCardBody,
+  CCol,
+  CRow,
+  CButton,
+  CFormSelect
+} from '@coreui/react'
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+const ReceivingFiles = () => {
+  const [availableFiles, setAvailableFiles] = useState([
+    'file1.pdf', 'file2.docx', 'file3.xlsx', 'file4.txt',
+    'file5.pdf', 'file6.docx', 'file7.xlsx', 'file8.txt',
+    'file9.pdf', 'file10.docx', 'file11.xlsx', 'file12.txt',
+    'file13.pdf', 'file14.docx', 'file15.xlsx', 'file16.txt',
+  ])
 
-const flattenData = (data) => {
-  console.log("Flattening data...", data);
-  const result = [];
-  data?.forEach(item => {
-    item.sysPrins?.forEach(sys => {
-      result.push({
-        client: item.client,
-        name: item.name,
-        sysPrin: sys.sysPrin
-      });
-    });
-  });
-  console.log("Flattened result:", result);
-  return result;
-};
+  const [selectedAvailable, setSelectedAvailable] = useState([])
+  const [selectedSent, setSelectedSent] = useState([])
 
-const SysPrinConfigs = () => {
-  const { clientList = [] } = useClientContext();
-  const [searchText, setSearchText] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
-  const [showGrid, setShowGrid] = useState(false);
-  const debounceTimer = useRef(null);
+  const [sentFiles, setSentFiles] = useState([])
 
-  console.log("📦 Context data loaded:", clientList);
+  const handleAdd = () => {
+    const toMove = availableFiles.filter(file => selectedAvailable.includes(file))
+    setAvailableFiles(availableFiles.filter(file => !selectedAvailable.includes(file)))
+    setSentFiles([...sentFiles, ...toMove])
+    setSelectedAvailable([])
+  }
 
-  const columnDefs = [
-    { field: 'client', headerName: 'Client', rowGroup: true, hide: true },
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'sysPrin', headerName: 'SysPrin', flex: 1 },
-  ];
-
-  const autoGroupColumnDef = {
-    headerName: 'Grouped by Client',
-    field: 'client',
-    cellRendererParams: { suppressCount: false },
-    flex: 1,
-  };
-
-  const handleInputChange = (e) => {
-    const input = e.target.value;
-    console.log("🔍 User input:", input);
-    setSearchText(input);
-
-    clearTimeout(debounceTimer.current);
-
-    debounceTimer.current = setTimeout(() => {
-      if (input.trim() === '') {
-        console.log("📭 Empty input – clearing results.");
-        setFilteredData([]);
-        setShowGrid(false);
-      } else {
-        const lowerInput = input.toLowerCase();
-        const flat = flattenData(clientList);
-        const filtered = flat.filter((item) =>
-          item.name?.toLowerCase().includes(lowerInput) ||
-          item.sysPrin?.toLowerCase().includes(lowerInput)
-        );
-        console.log("✅ Filtered result:", filtered);
-        setFilteredData(filtered);
-        setShowGrid(filtered.length > 0);
-      }
-    }, 200);
-  };
-
-  useEffect(() => {
-    return () => clearTimeout(debounceTimer.current);
-  }, []);
+  const handleRemove = () => {
+    const toMove = sentFiles.filter(file => selectedSent.includes(file))
+    setSentFiles(sentFiles.filter(file => !selectedSent.includes(file)))
+    setAvailableFiles([...availableFiles, ...toMove])
+    setSelectedSent([])
+  }
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <input
-        type="text"
-        placeholder="Type to search name or sysPrin..."
-        value={searchText}
-        onChange={handleInputChange}
-        style={{ width: '300px', marginBottom: '1rem', padding: '0.5rem' }}
-      />
-      {showGrid && (
-        <div className="ag-theme-custom">
-          <AgGridReact
-            rowData={filteredData}
-            columnDefs={columnDefs}
-            autoGroupColumnDef={autoGroupColumnDef}
-            groupDisplayType="singleColumn"
-            pagination={true}
-            paginationPageSize={5}
-            domLayout="autoHeight"
-            animateRows={false}
-          />
-        </div>
-      )}
-    </div>
-  );
-};
+    <CRow>
+      <CCol xs={12}>
+        <CCard className="mb-4">
+          <CCardBody>
+            <CRow>
+              {/* Left Box: Hosting Files */}
+              <CCol sm={4}>
+                <CRow style={{ height: '20px' }} />
+                <CFormSelect
+                  multiple
+                  size="10"
+                  style={{ height: '300px' }}
+                  onChange={(e) =>
+                    setSelectedAvailable([...e.target.selectedOptions].map(o => o.value))
+                  }
+                >
+                  {availableFiles.map((file, idx) => (
+                    <option key={idx} value={file}>{file}</option>
+                  ))}
+                </CFormSelect>
+              </CCol>
 
-export default SysPrinConfigs;
+              {/* Middle Buttons */}
+              <CCol sm={2} className="d-flex flex-column align-items-center justify-content-center gap-3">
+                <CButton
+                  color="success"
+                  variant="outline"
+                  size="sm"
+                  style={{ width: '120px' }}
+                  onClick={handleAdd}
+                >
+                  Add ➡️
+                </CButton>
+                <CButton
+                  color="danger"
+                  variant="outline"
+                  size="sm"
+                  style={{ width: '120px' }}
+                  onClick={handleRemove}
+                >
+                  ⬅️ Remove
+                </CButton>
+              </CCol>
+
+              {/* Right Box: Sent Files */}
+              <CCol sm={4}>
+                <CRow style={{ height: '20px' }} />
+                <CFormSelect
+                  multiple
+                  size="10"
+                  style={{ height: '300px' }}
+                  onChange={(e) =>
+                    setSelectedSent([...e.target.selectedOptions].map(o => o.value))
+                  }
+                >
+                  {sentFiles.map((file, idx) => (
+                    <option key={idx} value={file}>{file}</option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+
+              {/* Far Right Column: Additional Actions */}
+              <CCol sm={2} className="d-flex flex-column align-items-center justify-content-center gap-3">
+                <CButton color="secondary" variant="outline" size="sm" style={{ width: '120px' }}>
+                  New
+                </CButton>
+                <CButton color="info" variant="outline" size="sm" style={{ width: '120px' }}>
+                  Duplicate
+                </CButton>
+                <CButton color="warning" variant="outline" size="sm" style={{ width: '120px' }}>
+                  Change All
+                </CButton>
+                <CButton color="dark" variant="outline" size="sm" style={{ width: '120px' }}>
+                  Move
+                </CButton>
+                
+                  {/* Spacer row */}
+                 <div style={{ height: '20px' }} />
+
+                <CButton color="primary" variant="outline" size="sm" style={{ width: '120px' }}>
+                  OK
+                </CButton>
+                <CButton color="danger" variant="outline" size="sm" style={{ width: '120px' }}>
+                  Cancel
+                </CButton>
+              </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
+  )
+}
+
+export default ReceivingFiles

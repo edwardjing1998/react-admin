@@ -6,43 +6,40 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const ClientSearchInput = ({ input, handleChange, suggestions, handleSelect }) => {
+const ClientSearchInput = ({ handleSelect, setClientList }) => {
+  const [input, setInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [showGrid, setShowGrid] = useState(false);
   const debounceRef = useRef(null);
   const gridRef = useRef(null);
 
-  const filterSuggestions = (inputValue) => {
-    if (inputValue.trim() === '') {
+  const handleChange = async (e) => {
+    const value = e.target.value;
+    setInput(value);
+
+    if (value.length < 3) {
+      setSuggestions([]);
       setFilteredSuggestions([]);
       setShowGrid(false);
       return;
     }
 
-    const filtered = suggestions
-      .map((item) => {
-        const [client, ...nameParts] = item.split(' ');
-        return { client, name: nameParts.join(' ') };
-      })
-      .filter((item) =>
-        item.client.toLowerCase().includes(inputValue.toLowerCase()) ||
-        item.name.toLowerCase().includes(inputValue.toLowerCase())
+    try {
+      const res = await fetch('http://localhost:4444/api/clients');
+      const data = await res.json();
+      setClientList(data);
+      setSuggestions(data);
+      const matches = data.filter(c =>
+        c.client?.toLowerCase().includes(value.toLowerCase()) ||
+        c.name?.toLowerCase().includes(value.toLowerCase())
       );
-
-    setFilteredSuggestions(filtered);
-    setShowGrid(filtered.length > 0);
+      setFilteredSuggestions(matches);
+      setShowGrid(matches.length > 0);
+    } catch (err) {
+      console.error('❌ Error fetching client data:', err);
+    }
   };
-
-  // Debounce logic to avoid filtering on every keystroke
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    debounceRef.current = setTimeout(() => {
-      filterSuggestions(input);
-    }, 250); // Adjust debounce time if needed
-
-    return () => clearTimeout(debounceRef.current);
-  }, [input]);
 
   const columnDefs = [
     { field: 'client', headerName: 'Client', width: 120 },
@@ -50,8 +47,7 @@ const ClientSearchInput = ({ input, handleChange, suggestions, handleSelect }) =
   ];
 
   const onRowClicked = (event) => {
-    const label = `${event.data.client} ${event.data.name}`;
-    handleSelect(label);
+    handleSelect(event.data);
     setShowGrid(false);
   };
 
