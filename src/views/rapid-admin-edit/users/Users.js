@@ -1,39 +1,47 @@
-import React from 'react'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import InputLabel from '@mui/material/InputLabel'
-import FormControl from '@mui/material/FormControl'
+import React, { useState, useEffect } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
-const MultiSelectExample = () => {
-  const [selectedValues, setSelectedValues] = React.useState([])
+const ClientAutoComplete = () => {
+  const [options, setOptions] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(null);
 
-  const handleChange = (event) => {
-    setSelectedValues(event.target.value)
-  }
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (inputValue.trim() !== '') {
+        fetch(`http://localhost:4444/api/client-autocomplete?keyword=${inputValue}`)
+          .then(res => res.json())
+          .then(data => setOptions(data))
+          .catch(err => console.error('Autocomplete fetch error:', err));
+      } else {
+        setOptions([]);
+      }
+    }, 300); // debounce delay
+
+    return () => clearTimeout(delayDebounce);
+  }, [inputValue]);
 
   return (
-    <FormControl fullWidth size="small">
-      <InputLabel id="multi-select-label">Select Options</InputLabel>
-      <Select
-        labelId="multi-select-label"
-        multiple
-        value={selectedValues}
-        onChange={handleChange}
-        style={{ fontSize: '0.97rem', height: '100%' }}
-        label="Select Options"
-      >
-        <MenuItem value="1">123456</MenuItem>
-        <MenuItem value="2">1234567</MenuItem>
-        <MenuItem value="3">12345678</MenuItem>
-        <MenuItem value="4">123456</MenuItem>
-        <MenuItem value="5">1234567</MenuItem>
-        <MenuItem value="6">12345678</MenuItem>
-        <MenuItem value="7">123456</MenuItem>
-        <MenuItem value="8">1234567</MenuItem>
-        <MenuItem value="9">12345678</MenuItem>
-      </Select>
-    </FormControl>
-  )
-}
+    <Autocomplete
+      freeSolo
+      disableClearable
+      options={options.map(opt => `${opt.client} - ${opt.name}`)}
+      onInputChange={(event, value) => setInputValue(value)}
+      onChange={(event, newValue) => setSelectedValue(newValue)}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Search Client"
+          InputProps={{
+            ...params.InputProps,
+            type: 'search',
+          }}
+          fullWidth
+        />
+      )}
+    />
+  );
+};
 
-export default MultiSelectExample
+export default ClientAutoComplete;
