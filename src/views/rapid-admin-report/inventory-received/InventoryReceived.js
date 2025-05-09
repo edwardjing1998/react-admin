@@ -401,6 +401,7 @@ const InventoryReceived = () => {
                 defaultColDef={defaultColDef}
                 pagination={true}                       
                 paginationPageSize={10}
+                getRowId={(params) => params.data.rowId}
               />
               )}
 
