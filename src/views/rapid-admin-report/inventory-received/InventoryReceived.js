@@ -116,7 +116,7 @@ const InventoryReceived = () => {
     setFromDate(oneMonthAgo);
     setToDate(today);
 
-    fetch('http://localhost:4444/api/clients')
+    fetch('http://localhost:4444/api/client-search')
       .then(res => res.json())
       .then(data => {
         setClientsJson(data);
@@ -161,8 +161,14 @@ const InventoryReceived = () => {
       );
     }
 
-    setRowData(filteredData);
-    return filteredData;
+      // Add rowId to each record
+    const enriched = filteredData.map((item, index) => ({
+      ...item,
+      rowId: `row_${index}`,
+    }));
+
+    setRowData(enriched);
+    return enriched;
   };
 
   const handlePreview = () => {
