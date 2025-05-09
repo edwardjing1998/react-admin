@@ -72,6 +72,7 @@ const PreviewReport = ({ rawData = [], fromDate = '', toDate = '' }) => {
   }, [rawData, clients]);
 
   const groupedRows = [];
+  let rowIndex = 0;
 
   Object.entries(groupedMap).forEach(([client, sysPrinMap]) => {
     const clientDetails = clients.find(c => c.client.toUpperCase() === client.toUpperCase());
@@ -88,18 +89,20 @@ const PreviewReport = ({ rawData = [], fromDate = '', toDate = '' }) => {
 
     const clientName = `Client ${clientDetails.client}\u00A0\u00A0\u00A0\u00A0${clientDetails.name}\u00A0\u00A0\u00A0\u00A0${clientDetails.addr}\u00A0\u00A0${clientDetails.city}\u00A0\u00A0${clientDetails.state}\u00A0\u00A0${clientDetails.zip}`;
 
-    groupedRows.push({ isReportHeader: true, reportText: reportRangeText, client });
-    groupedRows.push({ isClientLabelRow: true, clientNameLabel: clientName });
-    groupedRows.push({ isClientGroup: true, client, label: clientLabel });
+    groupedRows.push({ rowId: `row_${rowIndex++}`, isReportHeader: true, reportText: reportRangeText, client });
+    groupedRows.push({ rowId: `row_${rowIndex++}`, isClientLabelRow: true, clientNameLabel: clientName });
+    groupedRows.push({ rowId: `row_${rowIndex++}`, isClientGroup: true, client, label: clientLabel });
+  
 
     if (expandedGroups[client]) {
       Object.entries(sysPrinMap).forEach(([sysPrin, dispositionMap]) => {
-        groupedRows.push({ isSysPrinGroup: true, client, sysPrin });
+        groupedRows.push({ rowId: `row_${rowIndex++}`, isSysPrinGroup: true, client, sysPrin });
 
         if (expandedGroups[`${client}_${sysPrin}`]) {
           DISPOSITION_TYPES.forEach((type) => {
             const { count = 0, totalCards = 0 } = dispositionMap[type] || {};
             groupedRows.push({
+              rowId: `row_${rowIndex++}`,
               isClientGroup: false,
               isSysPrinGroup: false,
               disposition: `${type}: ${count}`,
@@ -175,6 +178,7 @@ const PreviewReport = ({ rawData = [], fromDate = '', toDate = '' }) => {
         pagination={true}
         paginationPageSize={9}
         onCellClicked={onCellClicked}
+        getRowId={(params) => params.data.rowId}
       />
     </div>
   );
