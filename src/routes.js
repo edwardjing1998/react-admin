@@ -77,6 +77,7 @@ const ProductivityReport = React.lazy(() => import('./views/rapid-admin-report/p
 
 const SysPrinConfigs = React.lazy(() => import('./views/rapid-admin-edit/sys-pin-config/SysPrinConfigs'))
 
+const AddressChange = React.lazy(() => import('./views/rapid-admin-report/address-change/AddressChange'))
 
 
 const routes = [
@@ -119,7 +120,8 @@ const routes = [
   { path: '/query-maintenance/table-load-column-mapping', name: 'Colors', element: ChecksRadios },
   { path: '/query-maintenance/tool-tips', name: 'Colors', element: ChecksRadios },
 
-  { path: '/report/address-change', name: 'Colors', element: ChecksRadios },
+  { path: '/report/address-change', name: 'AddressChange', element: AddressChange },
+
   { path: '/report/mails-with-a-stat', name: 'Colors', element: ChecksRadios },
   { path: '/report/status', name: 'Colors', element: ChecksRadios },
   { path: '/report/pending-cis', name: 'Colors', element: ChecksRadios },
