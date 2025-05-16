@@ -261,7 +261,8 @@ const ClientInformation = ({
                   height: '100%',
                   width: '100%',
                   minWidth: '500px', // or whatever minimum width you want
-                  overflow: 'auto',
+                  overflowY: 'auto',     // ✅ only vertical scrolling
+                  overflowX: 'hidden',   // ❌ disables horizontal scrolling
                 }}
               >
 
