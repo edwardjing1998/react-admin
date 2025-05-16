@@ -254,7 +254,7 @@ const ClientInformation = ({
     <div className="d-flex flex-column h-100">
       <CRow className="flex-grow-1">
         <CCol xs={12} className="d-flex flex-column h-100">
-          <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '700px', border: 'none', boxShadow: 'none' }}>
+        <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '700px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
             <div style={{ flex: 1, overflowY: 'auto' }}>
               <div className="ag-grid-container ag-theme-quartz no-grid-border" style={{ height: '100%' }}>
                 <AgGridReact
