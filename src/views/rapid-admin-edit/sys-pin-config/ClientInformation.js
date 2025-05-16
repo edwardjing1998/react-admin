@@ -302,14 +302,14 @@ const ClientInformation = ({
                       justifyContent: 'center',
                       gap: '0 4px', 
                       flexWrap: 'nowrap', 
-                      overflowX: 'auto',
+                      overflowX: 'hidden',
                     }}
                   >
                     <button
                       onClick={() => setCurrentPage(0)}
                       style={buttonStyle}
                     >
-                      ⏮ First
+                      ⏮ 
                     </button>
                     <button
                       onClick={goToPreviousPage}
@@ -330,7 +330,7 @@ const ClientInformation = ({
                       }}
                       style={buttonStyle}
                     >
-                      Last ⏭
+                       ⏭
                     </button>
                   </div>
                 </>

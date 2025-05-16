@@ -52,6 +52,28 @@
   box-shadow: none !important;
 }
 
+/* Scrollbar styles for WebKit browsers (Chrome, Safari, Edge, Opera) */
+.ag-grid-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ag-grid-container::-webkit-scrollbar-thumb {
+  background-color: #ffffff;       /* white scrollbar thumb */
+  border-radius: 4px;
+}
+
+.ag-grid-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0;       /* light background for track */
+}
+
+/* Firefox-specific (optional fallback) */
+.ag-grid-container {
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff #f0f0f0;
+}
+
+
 
 
 
