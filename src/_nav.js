@@ -106,7 +106,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Users',
-    to: '/edit/users',
+    to: '/edit/client-search-input',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
   },
   {

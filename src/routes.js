@@ -60,7 +60,7 @@ const ClientInformationPanel = React.lazy(() => import('./views/rapid-admin-edit
 
 const GlobalSettingForm = React.lazy(() => import('./views/rapid-admin-edit/global-setting/GlobalSettingForm'))
 const DailyMessage = React.lazy(() => import('./views/rapid-admin-edit/daily-message/DailyMessage'))
-const Users = React.lazy(() => import('./views/rapid-admin-edit/users/Users'))
+const ClientAutoCompleteInput = React.lazy(() => import('./views/rapid-admin-edit/client-search-input/ClientAutoCompleteInput'))
 const ReceivingFiles = React.lazy(() => import('./views/rapid-admin-edit/receiving-files/ReceivingFiles'))
 const EmailSetup = React.lazy(() => import('./views/rapid-admin-edit/email-setup/EmailSetup'))
 
@@ -198,15 +198,11 @@ const routes = [
   // Edit
   { path: '/edit/global-settings', name: 'GlobalSettingForm', element: GlobalSettingForm },
   { path: '/edit/daily-message', name: 'DailyMessage', element: DailyMessage },
-  { path: '/edit/users', name: 'Users', element: Users },
+  { path: '/edit/client-search-input', name: 'ClientAutoCompleteInput', element: ClientAutoCompleteInput },
   { path: '/edit/sys-prin-config', name: 'SysPrinConfig', element: SysPrinConfig },
   { path: '/edit/sys-prin-config-new', name: 'SysPrinConfigs', element: SysPrinConfigs },
 
-
   { path: '/edit/client-information', name: 'ClientInformationPanel', element: ClientInformationPanel },
-
-  
-
 
   { path: '/eidt/receive-files', name: 'ReceivingFiles', element: ReceivingFiles },
   { path: '/edit/email-setup', name: 'EmailSetup', element: EmailSetup },

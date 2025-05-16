@@ -11,36 +11,48 @@ import '../../../scss/sys-prin-configuration/client-information.scss';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const ClientInformation = ({ onRowClick, clientList }) => {
+const ClientInformation = ({
+  onRowClick,
+  clientList,
+  setClientList,
+  currentPage,
+  setCurrentPage,
+  isWildcardMode,
+  setIsWildcardMode,
+  onFetchWildcardPage
+}) => {
   const [selectedClient, setSelectedClient] = useState('ALL');
   const [tableData, setTableData] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(15);
   const [expandedGroups, setExpandedGroups] = useState({});
   const gridApiRef = useRef(null);
 
-  useEffect(() => {
-    if (clientList && clientList.length > 0) {
-      console.log("Client List Loaded:");
-      clientList.forEach(client => {
-        console.log(`Client: ${client.client}`);
-        console.log("invalidDelivAreas:", client.invalidDelivAreas);
-      });
+  const buttonStyle = {
+    border: 'none',
+    background: 'none',
+    padding: '6px 12px',
+    cursor: 'pointer',
+    fontSize: '0.85rem',
+    color: '#555',
+    whiteSpace: 'nowrap', // ensure icon+text don't wrap
+  };
   
-      // ✅ Expand all groups by default
-      const expandedMap = {};
+  useEffect(() => {
+    setExpandedGroups((prev) => {
+      const next = {};
       clientList.forEach(client => {
-        expandedMap[client.client] = true;
+        const id = client.client;
+        next[id] = prev[id] ?? false;
       });
-      setExpandedGroups(expandedMap);
-    }
+      return next;
+    });
   }, [clientList]);
-  
 
-  useEffect(() => {
+  const flattenClientData = (clients) => {
     const flattenedData = [];
     const clientsToShow = selectedClient === 'ALL'
-      ? clientList
-      : clientList.filter(c => c.client === selectedClient);
+      ? clients
+      : clients.filter(c => c.client === selectedClient);
 
     clientsToShow.forEach(clientGroup => {
       const clientId = clientGroup.client;
@@ -72,7 +84,6 @@ const ClientInformation = ({ onRowClick, clientList }) => {
 
       if (isExpanded) {
         clientGroup.sysPrins?.forEach(sysPrin => {
-          const matchedSysPrin = clientGroup.sysPrins?.find(sp => sp.sysPrin === sysPrin.sysPrin);
           flattenedData.push({
             isGroup: false,
             client: clientId,
@@ -93,15 +104,90 @@ const ClientInformation = ({ onRowClick, clientList }) => {
             reportBreakFlag: clientGroup.reportBreakFlag,
             chLookUpType: clientGroup.chLookUpType,
             active: clientGroup.active,
-            sysPrinActive: matchedSysPrin?.active === 'Y'
+            sysPrinActive: sysPrin?.active === 'Y'
           });
         });
       }
     });
 
-    setTableData(flattenedData);
-    setPageSize(flattenedData.length);
+    const clientGroupsOnly = flattenedData.filter(row => row.isGroup);
+
+    const pagedGroups = isWildcardMode
+  ? clientGroupsOnly
+  : clientGroupsOnly.slice(0); // force fresh data for paged mode
+
+
+    const visibleRows = [];
+
+    pagedGroups.forEach(groupRow => {
+      visibleRows.push(groupRow);
+      if (expandedGroups[groupRow.client]) {
+        const children = flattenedData.filter(row => !row.isGroup && row.client === groupRow.client);
+        visibleRows.push(...children);
+      }
+    });
+
+    setTableData(visibleRows);
+  };
+
+  useEffect(() => {
+    flattenClientData(clientList);
   }, [selectedClient, expandedGroups, clientList]);
+
+  const goToNextPage = () => {
+    const nextPage = currentPage + 1;
+  
+    if (isWildcardMode && typeof onFetchWildcardPage === 'function') {
+      onFetchWildcardPage(nextPage);
+    } else {
+      fetch(`http://localhost:4444/api/clients-paging?page=${nextPage}&size=15`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch clients');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setClientList([]); // ✅ Clear old page data
+          setClientList(data);
+          setCurrentPage(nextPage);
+        })
+        .catch((error) => {
+          console.error('Error fetching clients:', error);
+        });
+    }
+  };
+  
+  
+
+  const goToPreviousPage = () => {
+    const previousPage = Math.max(0, currentPage - 1);
+    if (isWildcardMode && typeof onFetchWildcardPage === 'function') {
+      onFetchWildcardPage(previousPage);
+    } else {
+      setCurrentPage(previousPage);
+    }
+  };
+
+  const resetClientList = () => {
+    setClientList([]);
+    setCurrentPage(0);
+    fetch(`http://localhost:4444/api/clients-paging?page=0&size=15`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch initial clients');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setClientList([]);
+        setIsWildcardMode(false);
+        setClientList(data);
+      })
+      .catch((error) => {
+        console.error('Reset fetch failed:', error);
+      });
+  };
 
   const columnDefs = [
     {
@@ -109,21 +195,22 @@ const ClientInformation = ({ onRowClick, clientList }) => {
       headerName: 'Clients',
       colSpan: (params) => (params.data?.isGroup ? 2 : 1),
       cellRenderer: (params) =>
-        params.data?.isGroup
-          ? params.data.groupLabel
-          : '',
-      valueGetter: () => '',
-      filter: false,
-      flex: 1, // 👈 Half width
+        params.data?.isGroup ? params.data.groupLabel : '',
+      valueGetter: (params) =>
+        params.data?.isGroup ? `${params.data.client} - ${params.data.name}` : '',
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      flex: 0.5,
+      minWidth: 80,
     },
     {
       field: 'sysPrin',
       headerName: 'Sys Prin',
-      floatingFilter: true,         // ✅ Show floating filter input
+      floatingFilter: true,
       filter: 'agTextColumnFilter',
       width: 200,
       minWidth: 200,
-      flex: 2, // 👈 Twice the width of 'Clients'
+      flex: 2,
       cellRenderer: (params) => {
         if (params.data?.isGroup) return '';
         return (
@@ -152,7 +239,6 @@ const ClientInformation = ({ onRowClick, clientList }) => {
 
   const handleRowClicked = (event) => {
     const row = event.data;
-
     if (row.isGroup && row.client) {
       setExpandedGroups(prev => ({
         ...prev,
@@ -166,35 +252,96 @@ const ClientInformation = ({ onRowClick, clientList }) => {
 
   return (
     <div className="d-flex flex-column h-100">
-      <CRow style={{ backgroundColor: '#007bff', padding: '10px', color: 'white' }}>
-        <CCol xs={3}>
-          <div style={{ fontWeight: 'bold' }}></div>
-        </CCol>
-        <CCol xs={6}>
-          <div style={{ fontWeight: 'bold' }}></div>
-        </CCol>
-        <CCol xs={3}>
-          <div style={{ fontWeight: 'bold' }}></div>
-        </CCol>
-      </CRow>
       <CRow className="flex-grow-1">
         <CCol xs={12} className="d-flex flex-column h-100">
-          <CCard className="flex-grow-1 d-flex flex-column">
-            <div className="ag-grid-container ag-theme-quartz" style={{ flex: 1, minHeight: 0 }}>
-              <AgGridReact
-                rowData={tableData}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                rowClassRules={rowClassRules}
-                pagination={true}
-                paginationPageSize={pageSize}
-                suppressScrollOnNewData={true}  // ✅ Prevent grid from scrolling after group expand
-                onGridReady={(params) => {
-                  gridApiRef.current = params.api;
+          <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '700px', border: 'none', boxShadow: 'none' }}>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              <div className="ag-grid-container ag-theme-quartz no-grid-border" style={{ height: '100%' }}>
+                <AgGridReact
+                  rowData={tableData}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  rowClassRules={rowClassRules}
+                  pagination={false}
+                  suppressScrollOnNewData={true}
+                  onGridReady={(params) => {
+                    gridApiRef.current = params.api;
+                  }}
+                  animateRows={true}
+                  onRowClicked={handleRowClicked}
+                />             
+              </div>
+            </div>
+            <div  style={{
+                  padding: '4px',
+                  background: '#fafafa',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  columnGap: '4px',
+                  flexWrap: 'nowrap',
+                  overflowX: 'auto',
                 }}
-                animateRows={true}
-                onRowClicked={handleRowClicked}
-              />
+              >
+              {!isWildcardMode ? (
+                <>
+                  <div
+                    style={{
+                      padding: '4px',
+                      textAlign: 'center',
+                      background: '#fafafa',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: '0 4px', 
+                      flexWrap: 'nowrap', 
+                      overflowX: 'auto',
+                    }}
+                  >
+                    <button
+                      onClick={() => setCurrentPage(0)}
+                      style={buttonStyle}
+                    >
+                      ⏮ First
+                    </button>
+                    <button
+                      onClick={goToPreviousPage}
+                      style={buttonStyle}
+                    >
+                      ◀ Previous
+                    </button>
+                    <button
+                      onClick={goToNextPage}
+                      style={buttonStyle}
+                    >
+                      Next ▶
+                    </button>
+                    <button
+                      onClick={() => {
+                        const totalPages = Math.ceil(clientList.length / pageSize);
+                        setCurrentPage(totalPages - 1);
+                      }}
+                      style={buttonStyle}
+                    >
+                      Last ⏭
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button
+                onClick={resetClientList}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  padding: '6px 12px',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  color: '#555',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                🔁 Reset
+              </button>
+              )}
             </div>
           </CCard>
         </CCol>

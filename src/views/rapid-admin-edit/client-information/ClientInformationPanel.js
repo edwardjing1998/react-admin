@@ -106,6 +106,48 @@ const ClientInformationPanel = () => {
         <CCol xs={3}></CCol>
       </CRow>
 
+      <CRow className="p-3" style={{ height: '100%' }}>
+          {/* Left Panel */}
+          <CCol style={{ flex: '0 0 20%', maxWidth: '20%' }}>
+            <CCard style={{ height: '100%' }}>
+              <CCardBody style={{ height: '100%', padding: 0 }}>
+                <div style={{ height: '400px', overflow: 'auto' }}>
+                  <p style={{ margin: 0 }}>This panel uses 20%</p>
+                </div>
+              </CCardBody>
+            </CCard>
+          </CCol>
+
+          {/* Right Content */}
+          <CCol style={{ flex: '0 0 80%', maxWidth: '80%' }}>
+            <CCard style={{ height: '100%' }}>
+              <CCardBody style={{ height: '100%', padding: 0 }}>
+                <div style={{ height: '400px', overflow: 'auto' }}>
+                  <CRow className="p-3" style={{ height: '400px' }}>
+                    {/* Left Column - 50% */}
+                    <CCol style={{ flex: '0 0 50%', maxWidth: '50%', height: '100%' }}>
+                      <CCard style={{ height: '100%' }}>
+                        <CCardBody style={{ height: '100%' }}>
+                          <p>This is the left column (50%).</p>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+
+                    {/* Right Column - 50% */}
+                    <CCol style={{ flex: '0 0 50%', maxWidth: '50%', height: '100%' }}>
+                      <CCard style={{ height: '100%' }}>
+                        <CCardBody style={{ height: '100%' }}>
+                          <p>This is the right column (50%).</p>
+                        </CCardBody>
+                      </CCard>
+                    </CCol>
+                  </CRow>
+                </div>
+              </CCardBody>
+            </CCard>
+          </CCol>
+      </CRow>
+
       <CRow className="mb-3 g-3" style={{ backgroundColor: '#f8f9fa' }}>
         <CCol xs={3}>
           <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '6px', height: '460px' }}>

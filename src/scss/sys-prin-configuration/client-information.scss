@@ -38,6 +38,22 @@
   font-weight: bold;
 }
 
+.ag-root .ag-paging-panel {
+  display: none !important;
+}
+
+.no-grid-border .ag-root-wrapper,
+.no-grid-border .ag-root,
+.no-grid-border .ag-header,
+.no-grid-border .ag-body-viewport,
+.no-grid-border .ag-center-cols-clipper,
+.no-grid-border .ag-center-cols-container {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+
 
 
 
