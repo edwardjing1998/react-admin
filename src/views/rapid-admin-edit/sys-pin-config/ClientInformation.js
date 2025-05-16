@@ -255,8 +255,16 @@ const ClientInformation = ({
       <CRow className="flex-grow-1">
         <CCol xs={12} className="d-flex flex-column h-100">
         <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '700px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              <div className="ag-grid-container ag-theme-quartz no-grid-border" style={{ height: '100%' }}>
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+            <div className="ag-grid-container ag-theme-quartz no-grid-border"
+                 style={{
+                  height: '100%',
+                  width: '100%',
+                  minWidth: '500px', // or whatever minimum width you want
+                  overflow: 'auto',
+                }}
+              >
+
                 <AgGridReact
                   rowData={tableData}
                   columnDefs={columnDefs}
