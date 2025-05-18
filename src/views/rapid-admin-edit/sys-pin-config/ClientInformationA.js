@@ -33,9 +33,6 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
   
   return (
     <>
-      <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '12px' }}>
-        Client Information
-      </div>
       <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <TextField
           label="Client ID"
@@ -101,7 +98,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
           sx={sharedSx}
         />
         <TextField
-          label="Fax Number"
+          placeholder="Enter fax number"  // ✅ Add your placeholder here
           value={selectedData.faxNumber}
           onChange={handleChange('faxNumber')}
           size="small"
@@ -109,6 +106,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
           disabled={!isEditable}
           sx={sharedSx}
         />
+
         {/* Optionally re-enable this one if needed */}
         {/* <TextField
           label="Billing Sys/Prin"

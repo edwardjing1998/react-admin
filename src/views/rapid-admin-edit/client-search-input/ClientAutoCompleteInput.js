@@ -1,12 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import Popper from '@mui/material/Popper';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 
   const ClientAutoComplete = ({ inputValue, setInputValue, onClientsFetched, isWildcardMode, setIsWildcardMode }) => {
 
   const [options, setOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
   const keywordRef = useRef('');
+
+  const CustomPopper = function (props) {
+    return <Popper {...props} modifiers={[{ name: 'offset', options: { offset: [0, 4] } }]} 
+      style={{ width: 400 }} 
+    />;
+  };
+  
 
   useEffect(() => {
       console.log("🔥 isWildcardMode changed:", isWildcardMode);
@@ -35,7 +45,7 @@ import TextField from '@mui/material/TextField';
           .then((data) => {
             const clientData = data.data || data;
             setOptions(clientData);
-            if (isWildcard && typeof onClientsFetched === 'function') {
+            if (isWildcard && typeof onClientsFetched === 'function' && data != "") {
               onClientsFetched(clientData);
             }
           })
@@ -64,6 +74,20 @@ import TextField from '@mui/material/TextField';
       ).filter(Boolean)}
       onInputChange={(event, value) => setInputValue(value)}
       onChange={(event, newValue) => setSelectedValue(newValue)}
+      PopperComponent={CustomPopper}
+      slotProps={{
+        paper: {
+          sx: {
+            fontSize: '0.78rem', // ✅ Apply font size here
+            width: 300,
+          },
+        },
+        listbox: {
+          sx: {
+            fontSize: '0.78rem', // ✅ Also good for extra control
+          },
+        }
+      }}
       sx={{ width: '100%', backgroundColor: '#fff' }}
       renderInput={(params) => (
         <TextField
@@ -75,20 +99,31 @@ import TextField from '@mui/material/TextField';
           InputProps={{
             ...params.InputProps,
             type: 'search',
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon sx={{ fontSize: 18, color: '#555' }} />
+              </InputAdornment>
+            ),
             sx: {
               height: 36,
               padding: '0 8px',
               fontSize: '0.875rem',
               backgroundColor: '#fff',
-              border: 'none',
               boxShadow: 'none',
-              '& fieldset': {
-                border: 'none',
-              }
+              '& .MuiOutlinedInput-notchedOutline': {
+                border: '1px solid black',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                border: '1px solid black',
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                border: '1px solid black',
+              },
             }
           }}
         />
       )}
+      
     />
   );
 };

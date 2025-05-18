@@ -23,7 +23,7 @@ const ClientInformation = ({
 }) => {
   const [selectedClient, setSelectedClient] = useState('ALL');
   const [tableData, setTableData] = useState([]);
-  const [pageSize] = useState(15);
+  const [pageSize] = useState(20);
   const [expandedGroups, setExpandedGroups] = useState({});
   const gridApiRef = useRef(null);
 
@@ -80,6 +80,23 @@ const ClientInformation = ({
           </span>
         ),
         client: clientId,
+        name: clientGroup.name,
+        address: clientGroup.addr,
+        city: clientGroup.city,
+        state: clientGroup.state,
+        zip: clientGroup.zip,
+        contact: clientGroup.contact,
+        phone: clientGroup.phone,
+        faxNumber: clientGroup.faxNumber,
+        billingSp: clientGroup.billingSp,
+        excludeFromReport: clientGroup.excludeFromReport,
+        positiveReports: clientGroup.positiveReports,
+        subClientInd: clientGroup.subClientInd,
+        amexIssued: clientGroup.amexIssued,
+        reportBreakFlag: clientGroup.reportBreakFlag,
+        chLookUpType: clientGroup.chLookUpType,
+        active: clientGroup.active,
+        memoType:'Pending'
       });
 
       if (isExpanded) {
@@ -127,7 +144,8 @@ const ClientInformation = ({
       }
     });
 
-    setTableData(visibleRows);
+    setTimeout(() => setTableData(visibleRows), 0);
+
   };
 
   useEffect(() => {
@@ -140,7 +158,7 @@ const ClientInformation = ({
     if (isWildcardMode && typeof onFetchWildcardPage === 'function') {
       onFetchWildcardPage(nextPage);
     } else {
-      fetch(`http://localhost:4444/api/clients-paging?page=${nextPage}&size=15`)
+      fetch(`http://localhost:4444/api/clients-paging?page=${nextPage}&size=20`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch clients');
@@ -172,7 +190,7 @@ const ClientInformation = ({
   const resetClientList = () => {
     setClientList([]);
     setCurrentPage(0);
-    fetch(`http://localhost:4444/api/clients-paging?page=0&size=15`)
+    fetch(`http://localhost:4444/api/clients-paging?page=0&size=20`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch initial clients');
@@ -239,30 +257,44 @@ const ClientInformation = ({
 
   const handleRowClicked = (event) => {
     const row = event.data;
+  
     if (row.isGroup && row.client) {
-      setExpandedGroups(prev => ({
-        ...prev,
-        [row.client]: !prev[row.client],
-      }));
+      const clientId = row.client;
+  
+      setExpandedGroups((prev) => {
+        const currentlyExpanded = prev[clientId] ?? false;
+  
+        const newState = {};
+        clientList.forEach(client => {
+          newState[client.client] = false; // collapse all
+        });
+  
+        // expand clicked one if it wasn't already open
+        newState[clientId] = !currentlyExpanded;
+  
+        return newState;
+      });
+  
+      onRowClick(row); // ✅ send group row to parent
     } else if (!row.isGroup && row.client) {
       localStorage.setItem('selectedClient', row.client);
-      onRowClick(row);
+      onRowClick(row); // ✅ send leaf row to parent
     }
   };
+  
 
   return (
     <div className="d-flex flex-column h-100">
       <CRow className="flex-grow-1">
         <CCol xs={12} className="d-flex flex-column h-100">
-        <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '700px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
+        <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '950px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
             <div style={{ flex: 1, overflow: 'hidden' }}>
             <div className="ag-grid-container ag-theme-quartz no-grid-border"
                  style={{
                   height: '100%',
                   width: '100%',
-                  minWidth: '500px', // or whatever minimum width you want
-                  overflowY: 'auto',     // ✅ only vertical scrolling
-                  overflowX: 'hidden',   // ❌ disables horizontal scrolling
+                  overflowY: 'auto',     // only vertical scrolling
+                  overflowX: 'hidden',   // disables horizontal scrolling
                 }}
               >
 
@@ -289,23 +321,12 @@ const ClientInformation = ({
                   alignItems: 'center',
                   columnGap: '4px',
                   flexWrap: 'nowrap',
-                  overflowX: 'auto',
+                  overflowX: 'hidden',
                 }}
               >
               {!isWildcardMode ? (
                 <>
-                  <div
-                    style={{
-                      padding: '4px',
-                      textAlign: 'center',
-                      background: '#fafafa',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      gap: '0 4px', 
-                      flexWrap: 'nowrap', 
-                      overflowX: 'hidden',
-                    }}
-                  >
+                  <div style={{  padding: '4px', textAlign: 'center', background: '#fafafa', display: 'flex', justifyContent: 'center', gap: '4px', flexWrap: 'nowrap', overflowX: 'hidden', }} >
                     <button
                       onClick={() => setCurrentPage(0)}
                       style={buttonStyle}
