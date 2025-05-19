@@ -80,22 +80,7 @@ const ClientInformation = ({
           </span>
         ),
         client: clientId,
-        name: clientGroup.name,
-        address: clientGroup.addr,
-        city: clientGroup.city,
-        state: clientGroup.state,
-        zip: clientGroup.zip,
-        contact: clientGroup.contact,
-        phone: clientGroup.phone,
-        faxNumber: clientGroup.faxNumber,
-        billingSp: clientGroup.billingSp,
-        excludeFromReport: clientGroup.excludeFromReport,
-        positiveReports: clientGroup.positiveReports,
-        subClientInd: clientGroup.subClientInd,
-        amexIssued: clientGroup.amexIssued,
-        reportBreakFlag: clientGroup.reportBreakFlag,
-        chLookUpType: clientGroup.chLookUpType,
-        active: clientGroup.active,
+        ...clientGroup,
         memoType:'Pending'
       });
 
@@ -216,16 +201,13 @@ const ClientInformation = ({
         params.data?.isGroup ? params.data.groupLabel : '',
       valueGetter: (params) =>
         params.data?.isGroup ? `${params.data.client} - ${params.data.name}` : '',
-      filter: 'agTextColumnFilter',
-      floatingFilter: true,
+
       flex: 0.5,
       minWidth: 80,
     },
     {
       field: 'sysPrin',
       headerName: 'Sys Prin',
-      floatingFilter: true,
-      filter: 'agTextColumnFilter',
       width: 200,
       minWidth: 200,
       flex: 2,

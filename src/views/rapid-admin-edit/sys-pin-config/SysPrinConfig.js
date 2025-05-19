@@ -6,6 +6,8 @@ import {
   CCardBody
 } from '@coreui/react';
 
+import { Button, Typography } from '@mui/material';
+
 import ClientInformation from './ClientInformation.js';
 import SysPrin from './SysPrin.js';
 import ClientAutoComplete from '../client-search-input/ClientAutoCompleteInput.js'
@@ -15,6 +17,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox'
 import ClientAtmAndCashPrefixes from './ClientAtmAndCashPrefixes.js';
 import ClientReports from './ClientReports.js';
+import ClientSysPrinList from './ClientSysPrinList.js';
+import NewClientWindow from './NewClientWindow.js';
+import Drawer from '@mui/material/Drawer';
+
 
 import {
   REPORT_BREAK_OPTIONS,
@@ -94,6 +100,9 @@ const SysPinConfig = () => {
     const checked = event.target.checked;
     setSelectedData((prev) => ({ ...prev, [field]: checked }));
   };
+
+  const [newClientWidow, setNewClientWidow] = useState(false);
+
 
   const handleRowClick = (rowData) => {
     const billingSp = rowData.billingSp || '';
@@ -200,11 +209,11 @@ const SysPinConfig = () => {
         <CCol style={{ flex: '0 0 70%', maxWidth: '70%' }}>
           <CCard style={{ height: '100%' }}>
             <CCardBody style={{ height: '100%', padding: 0 }}>
-              <div style={{ height: '700px', overflow: 'auto' }}>
-                <CRow className="p-3" style={{ height: '700px' }}>
+              <div style={{ height: '950px', overflow: 'hidden' }}>
+                <CRow className="p-3" style={{ height: '950px' }}>
                  <CCol style={{ flex: '0 0 60%', maxWidth: '60%', height: '100%' }}>
 
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '-6px' }}>
+                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '2px' }}>
                       <CCardBody
                         className="d-flex align-items-center"
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
@@ -213,7 +222,7 @@ const SysPinConfig = () => {
                       </CCardBody>
                     </CCard>
 
-                    <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '10px' }}>
+                    <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '15px' }}>
                       <CCardBody
                         style={{
                           padding: '0.25rem 0.5rem',
@@ -302,7 +311,7 @@ const SysPinConfig = () => {
                       </CCardBody>
                     </CCard>
 
-                    <CCard style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <CCard style={{ marginTop: '15px', marginBottom: '10px' }}>
                     <CCardBody
                         style={{
                           padding: '0.8rem',
@@ -394,27 +403,27 @@ const SysPinConfig = () => {
                       </CCardBody>
                     </CCard>
 
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '10px' }}>
+                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
                       <CCardBody
                         className="d-flex align-items-center"
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
                       >
-                        <span style={{ fontSize: '0.85rem' }}>ATM Cash Prefixes</span>
+                        <span style={{ fontSize: '0.85rem' }}>Client Sys/Prin List</span>
                       </CCardBody>
                     </CCard>
 
-                    <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '10px' }}>
+                    <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
                       <CCardBody
                         className="d-flex align-items-center"
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
                       >
                         <div style={{ width: '100%', height: '100%' }}>
-                          <ClientAtmAndCashPrefixes />
+                          <ClientSysPrinList data={selectedGroupRow?.sysPrins || []} />
                         </div>
                       </CCardBody>
                     </CCard>
 
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '10px' }}>
+                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
                       <CCardBody
                         className="d-flex align-items-center"
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
@@ -423,23 +432,68 @@ const SysPinConfig = () => {
                       </CCardBody>
                     </CCard>
 
-                    <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '10px' }}>
+                    <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
                       <CCardBody
                         className="d-flex align-items-center"
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
                       >
                         <div style={{ width: '100%', height: '100%' }}>
-                          <ClientReports />
+                          <ClientReports data={selectedGroupRow?.reportOptions || []}  />
                         </div>
                       </CCardBody>
                     </CCard>
-                  </CCol>
-                </CRow>
-              </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
+                      <CCardBody
+                        className="d-flex align-items-center"
+                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
+                      >
+                        <span style={{ fontSize: '0.85rem' }}>ATM Cash Prefixes</span>
+                      </CCardBody>
+                  </CCard>
+                  <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
+                      <CCardBody
+                        className="d-flex align-items-center"
+                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
+                      >
+                        <div style={{ width: '100%', height: '100%' }}>
+                           <ClientAtmAndCashPrefixes data={selectedGroupRow?.sysPrinsPrefixes || []} />
+                        </div>
+                      </CCardBody>
+                  </CCard>
+                  <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '25px' }}>
+                      <CCardBody
+                        className="d-flex align-items-center"
+                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
+                      >
+                          <div>
+                            <Button variant="outlined" size="small" sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}>Delete Client</Button>
+                            <Button variant="outlined" size="small" sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}>Edit Client</Button>
+                            <Button variant="outlined" onClick={() => setNewClientWidow(true)} size="small" sx={{ fontSize: '0.78rem', textTransform: 'none' }}>New Client</Button>
+                          </div>
+                      </CCardBody>
+                  </CCard>
+              </CCol>
+            </CRow>
+          </div>
+        </CCardBody>
+      </CCard>                   
+    </CCol>
+  </CRow>
+
+  <Drawer
+        anchor="right"
+        open={newClientWidow}
+        onClose={() => setNewClientWidow(false)}
+        PaperProps={{ sx: { width: '30vw', padding: '16px' } }}
+      >
+        <NewClientWindow onClose={() => setNewClientWidow(false)} selectedGroupRow={selectedGroupRow} setSelectedGroupRow={setSelectedGroupRow} />
+  </Drawer>
+
+  
+
+
+
+
       {/* Left Panel (30%)
       <CRow className="mb-3">
         <CCol xs={12}>

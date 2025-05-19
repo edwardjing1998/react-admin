@@ -1,10 +1,10 @@
 import { Button, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
-const PAGE_SIZE = 3; // 4x4 grid
+const PAGE_SIZE = 8; // 4x4 grid
 const COLUMNS = 4;
 
-const ClientReports = ({ data }) => {
+const ClientAtmAndCashPrefixes = ({ data }) => {
   const [page, setPage] = useState(0);
 
   const pageCount = Math.ceil((data?.length || 0) / PAGE_SIZE);
@@ -43,29 +43,35 @@ const ClientReports = ({ data }) => {
         style={{
           flex: 1,
           display: 'grid',
-          gridTemplateColumns: '240px 80px 60px 60px',
+          gridTemplateColumns: '1fr 1fr 1fr 1fr',
           rowGap: '0px',
-          columnGap: '4px',
+          columnGap: '0px',
           minHeight: '100px',
           alignContent: 'start'
         }}
       >
         {/* Header Row */}
-        <div style={headerStyle}>Name</div>
-        <div style={headerStyle}>Received</div>
-        <div style={headerStyle}>Type</div>
-        <div style={headerStyle}>Output</div>
+        <div style={headerStyle}>SysPrin</div>
+        <div style={headerStyle}>Active</div>
+        <div style={headerStyle}>SysPrin</div>
+        <div style={headerStyle}>Active</div>
 
         {/* Data Rows */}
         {pageData.length > 0 ? (
-          pageData.map((item, index) => (
-            <React.Fragment key={`${item.reportId}-${index}`}>
-              <div style={cellStyle}>{item.reportDetails?.queryName?.trim() || ''}</div>
-              <div style={cellStyle}>{item.receiveFlag ? 'Yes' : 'No'}</div>
-              <div style={cellStyle}>{item.reportDetails?.fileExt || ''}</div>
-              <div style={cellStyle}>{item.outputTypeCd}</div>
-            </React.Fragment>
-          ))
+          pageData.reduce((rows, item, index) => {
+            if (index % 2 === 0) {
+              const second = pageData[index + 1];
+              rows.push(
+                <React.Fragment key={index}>
+                  <div style={cellStyle}>{item.sysPrin}</div>
+                  <div style={cellStyle}>{item.active ? 'Yes' : 'No'}</div>
+                  <div style={cellStyle}>{second?.sysPrin || ''}</div>
+                  <div style={cellStyle}>{second ? (second.active ? 'Yes' : 'No') : ''}</div>
+                </React.Fragment>
+              );
+            }
+            return rows;
+          }, [])
         ) : (
           <Typography sx={{ gridColumn: `span ${COLUMNS}`, fontSize: '0.75rem', padding: '0 16px' }}>
             xxxx - xxxx
@@ -110,4 +116,4 @@ const ClientReports = ({ data }) => {
   );
 };
 
-export default ClientReports;
+export default ClientAtmAndCashPrefixes;

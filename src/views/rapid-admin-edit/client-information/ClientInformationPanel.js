@@ -151,7 +151,7 @@ const ClientInformationPanel = () => {
       <CRow className="mb-3 g-3" style={{ backgroundColor: '#f8f9fa' }}>
         <CCol xs={3}>
           <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '6px', height: '460px' }}>
-            <ClientInformationA selectedData={selectedData} isEditable={isEditable} setSelectedData={setSelectedData} />
+            {/* <ClientInformationA selectedData={selectedData} isEditable={isEditable} setSelectedData={setSelectedData} />  */}
           </div>
         </CCol>
 
@@ -180,7 +180,7 @@ const ClientInformationPanel = () => {
       <CRow className="mt-3">
         <CCol xs={3} style={{ paddingRight: '8px' }}>
           <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '6px' }}>
-            <ClientInformationB selectedData={selectedData} isEditable={isEditable} setSelectedData={setSelectedData} />
+            {/* <ClientInformationB selectedData={selectedData} isEditable={isEditable} setSelectedData={setSelectedData} />  */}
             <hr style={{ border: 'none', borderTop: '1px solid black', marginTop: '12px', marginBottom: '2px' }} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <button

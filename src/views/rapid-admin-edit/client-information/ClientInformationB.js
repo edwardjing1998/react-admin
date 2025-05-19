@@ -12,15 +12,15 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleDeleteClick }) => {
+const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow }) => {
   const handleChange = (field) => (event) => {
     const value = event.target.value;
-    setSelectedData((prev) => ({ ...prev, [field]: value }));
+    setSelectedGroupRow((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleCheckboxChange = (field) => (event) => {
     const checked = event.target.checked;
-    setSelectedData((prev) => ({ ...prev, [field]: checked }));
+    setSelectedGroupRow((prev) => ({ ...prev, [field]: checked }));
   };
 
   const sharedSx = {
@@ -44,7 +44,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
       {/* Row 0: Phone */}
       <TextField
         label="Phone"
-        value={selectedData.phone}
+        value={selectedGroupRow.phone}
         onChange={handleChange('phone')}
         size="small"
         fullWidth
@@ -55,7 +55,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
       {/* Row 1: Billing Sys/Prin */}
       <TextField
         label="Billing Sys/Prin"
-        value={selectedData.billingSp}
+        value={selectedGroupRow.billingSp}
         onChange={handleChange('billingSp')}
         size="small"
         fullWidth
@@ -69,7 +69,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
         <Select
           labelId="report-breaks-label"
           id="report-breaks"
-          value={selectedData.reportBreakFlag?.toString() || ''}
+          value={selectedGroupRow.reportBreakFlag?.toString() || ''}
           label="Report Breaks"
           onChange={handleChange('reportBreakFlag')}
           disabled={!isEditable}
@@ -87,7 +87,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
         <Select
           labelId="search-type-label"
           id="search-type"
-          value={selectedData.chLookUpType?.toString() || ''}
+          value={selectedGroupRow.chLookUpType?.toString() || ''}
           label="Search Type"
           onChange={handleChange('chLookUpType')}
           disabled={!isEditable}
@@ -102,7 +102,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
 
       {/* Checkboxes */}
       <FormControlLabel
-        control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
+        control={<Checkbox size="small" checked={!!selectedGroupRow.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
         label="Client Active"
         sx={{
           backgroundColor: 'white',
@@ -113,7 +113,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
         }}
       />
       <FormControlLabel
-        control={<Checkbox size="small" checked={!!selectedData.positiveReports} onChange={handleCheckboxChange('positiveReports')} disabled={!isEditable} />}
+        control={<Checkbox size="small" checked={!!selectedGroupRow.positiveReports} onChange={handleCheckboxChange('positiveReports')} disabled={!isEditable} />}
         label="Positive Reporting"
         sx={{
           backgroundColor: 'white',
@@ -124,7 +124,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
         }}
       />
       <FormControlLabel
-        control={<Checkbox size="small" checked={!!selectedData.subClientInd} onChange={handleCheckboxChange('subClientInd')} disabled={!isEditable} />}
+        control={<Checkbox size="small" checked={!!selectedGroupRow.subClientInd} onChange={handleCheckboxChange('subClientInd')} disabled={!isEditable} />}
         label="Sub Client"
         sx={{
           backgroundColor: 'white',
@@ -135,7 +135,7 @@ const ClientInformationB = ({ selectedData, isEditable, setSelectedData, handleD
         }}
       />
       <FormControlLabel
-        control={<Checkbox size="small" checked={!!selectedData.amexIssued} onChange={handleCheckboxChange('amexIssued')} disabled={!isEditable} />}
+        control={<Checkbox size="small" checked={!!selectedGroupRow.amexIssued} onChange={handleCheckboxChange('amexIssued')} disabled={!isEditable} />}
         label="American Express Issued"
         sx={{
           backgroundColor: 'white',

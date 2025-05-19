@@ -2,9 +2,9 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
-const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
+const ClientInformationA = ({ selectedGroupRow, isEditable, setSelectedGroupRow }) => {
   const handleChange = (field) => (e) => {
-    setSelectedData((prev) => ({ ...prev, [field]: e.target.value }));
+    setSelectedGroupRow((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   const sharedSx = {
@@ -39,7 +39,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
       <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
         <TextField
           label="Client ID"
-          value={selectedData.client}
+          value={selectedGroupRow.client}
           onChange={handleChange('client')}
           size="small"
           fullWidth
@@ -48,7 +48,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="Name"
-          value={selectedData.name}
+          value={selectedGroupRow.name}
           onChange={handleChange('name')}
           size="small"
           fullWidth
@@ -57,7 +57,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="Address Line"
-          value={selectedData.addr || ''}
+          value={selectedGroupRow.addr || ''}
           onChange={handleChange('addr')}
           size="small"
           fullWidth
@@ -66,7 +66,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="City"
-          value={selectedData.city || ''}
+          value={selectedGroupRow.city || ''}
           onChange={handleChange('city')}
           size="small"
           fullWidth
@@ -75,7 +75,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="State"
-          value={selectedData.state || ''}
+          value={selectedGroupRow.state || ''}
           onChange={handleChange('state')}
           size="small"
           fullWidth
@@ -84,7 +84,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="Zip Code"
-          value={selectedData.zip || ''}
+          value={selectedGroupRow.zip || ''}
           onChange={handleChange('zip')}
           size="small"
           fullWidth
@@ -93,7 +93,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="Contact"
-          value={selectedData.contact}
+          value={selectedGroupRow.contact}
           onChange={handleChange('contact')}
           size="small"
           fullWidth
@@ -102,7 +102,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         />
         <TextField
           label="Fax Number"
-          value={selectedData.faxNumber}
+          value={selectedGroupRow.faxNumber}
           onChange={handleChange('faxNumber')}
           size="small"
           fullWidth
@@ -112,7 +112,7 @@ const ClientInformationA = ({ selectedData, isEditable, setSelectedData }) => {
         {/* Optionally re-enable this one if needed */}
         {/* <TextField
           label="Billing Sys/Prin"
-          value={selectedData.billingSp}
+          value={selectedGroupRow.billingSp}
           onChange={handleChange('billingSp')}
           size="small"
           fullWidth

@@ -21,8 +21,6 @@ const ClientReport = ({ onRowClick, selectedData }) => {
       return;
     }
 
-    console.log('✅ selectedData.reportOptions:', selectedData.reportOptions);
-
     const clientData = selectedData.reportOptions.map((option) => ({
       reportName: option?.reportDetails?.reportName || '',
       receive: option.receiveFlag ? 'Yes' : 'No',
@@ -170,13 +168,10 @@ const columnDefs = [
     <CRow>
       <CCol xs={12}>
         <CCard className="mb-4">
-          <CCardHeader style={{ backgroundColor: '#f8f9f9', color: 'black' }}>
-            Sys Prins Clients – {selectedData?.client || 'Select a client'}
-          </CCardHeader>
           <CCardBody>
             <div
               className="ag-grid-container ag-theme-quartz"
-              style={{ height: 400 }}
+              style={{ height: 200 }}
             >
               <AgGridReact
                 rowData={tableData}
