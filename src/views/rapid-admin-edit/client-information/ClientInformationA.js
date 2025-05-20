@@ -33,10 +33,7 @@ const ClientInformationA = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
   
   return (
     <>
-      <div style={{ fontWeight: 'bold', fontSize: '14px', marginBottom: '12px' }}>
-        Client Information
-      </div>
-      <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, }}>
         <TextField
           label="Client ID"
           value={selectedGroupRow.client}

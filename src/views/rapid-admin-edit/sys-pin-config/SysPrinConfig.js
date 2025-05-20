@@ -15,11 +15,13 @@ import ClientInformationA from './ClientInformationA'
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox'
-import ClientAtmAndCashPrefixes from './ClientAtmAndCashPrefixes.js';
+import PreviewAtmAndCashPrefixes from './PreviewAtmAndCashPrefixes.js';
 import ClientReports from './ClientReports.js';
 import ClientSysPrinList from './ClientSysPrinList.js';
 import NewClientWindow from './NewClientWindow.js';
 import Drawer from '@mui/material/Drawer';
+import BusinessIcon from '@mui/icons-material/Business';
+import ComputerIcon from '@mui/icons-material/Computer';
 
 
 import {
@@ -142,13 +144,13 @@ const SysPinConfig = () => {
     <div className="d-flex flex-column" style={{ height: '100vh', width: '80vw', overflow: 'auto' }}>
      <CRow className="px-3" style={{ height: '100%', marginBottom: '10px' }}>
         {/* Left Panel (30%) */}
-        <CCol style={{ flex: '0 0 29%', maxWidth: '29%', paddingLeft: '0px' }}>
+        <CCol style={{ flex: '0 0 29%', maxWidth: '29%', paddingLeft: '0px', border: '1px solid #ccc', }}>
             <ClientAutoComplete
               inputValue={inputValue}
               setInputValue={setInputValue}
               onClientsFetched={handleClientsFetched}
               isWildcardMode={isWildcardMode}
-              setIsWildcardMode={setIsWildcardMode}
+              setIsWildcardMode={setIsWildcardMode}           
             />
         </CCol>
 
@@ -158,19 +160,15 @@ const SysPinConfig = () => {
             <CCardBody style={{ padding: 0 }}>
               <CRow style={{ height: '30px' }}>
                 {/* Left Column */}
-                <CCol style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                  
-                    <p style={{ margin: 0 }}>
-                      {selectedGroupRow
-                        ? `Selected Group: ${selectedGroupRow.client} - ${selectedGroupRow.name || ''}`
-                        : 'No Client Found'}
-                    </p>
-
+                <CCol style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', border: '0px solid #ccc', maxWidth: '60%' }}>
+                     <BusinessIcon style={{ marginLeft: '8px', fontSize: '18px' }} />                
+                     <p style={{ margin: 0, marginLeft: '20px', fontWeight:'800' }}>Client Information</p>
                 </CCol>
 
                 {/* Right Column */}
-                <CCol style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                  <p style={{ margin: 0 }}>This is the right column (50%).</p>
+                <CCol style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', border: '0px solid #ccc', maxWidth: '40%' }}>
+                    <ComputerIcon style={{ marginLeft: '8px', fontSize: '18px' }} />                
+                    <p style={{ margin: 0, marginLeft: '20px', fontWeight:'800' }}>SYS/PRIN</p>
                 </CCol>
               </CRow>
             </CCardBody>
@@ -211,14 +209,17 @@ const SysPinConfig = () => {
             <CCardBody style={{ height: '100%', padding: 0 }}>
               <div style={{ height: '950px', overflow: 'hidden' }}>
                 <CRow className="p-3" style={{ height: '950px' }}>
-                 <CCol style={{ flex: '0 0 60%', maxWidth: '60%', height: '100%' }}>
+                 <CCol style={{ flex: '0 0 56%', maxWidth: '56%', height: '100%' }}>
 
                     <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '2px' }}>
                       <CCardBody
                         className="d-flex align-items-center"
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
                       >
-                        <span style={{ fontSize: '0.85rem' }}>Header or Toolbar Section</span>
+                          <p style={{ margin: 0, fontSize:'0.78rem', fontWeight: '500' }}> {selectedGroupRow
+                              ? `Selected Client: ${selectedGroupRow.client} - ${selectedGroupRow.name || ''}`
+                              : 'No Client Found'}
+                          </p>
                       </CCardBody>
                     </CCard>
 
@@ -456,7 +457,7 @@ const SysPinConfig = () => {
                         style={{ padding: '0.25rem 0.5rem', height: '100%' }}
                       >
                         <div style={{ width: '100%', height: '100%' }}>
-                           <ClientAtmAndCashPrefixes data={selectedGroupRow?.sysPrinsPrefixes || []} />
+                           <PreviewAtmAndCashPrefixes data={selectedGroupRow?.sysPrinsPrefixes || []} />
                         </div>
                       </CCardBody>
                   </CCard>
@@ -472,6 +473,232 @@ const SysPinConfig = () => {
                           </div>
                       </CCardBody>
                   </CCard>
+              </CCol>
+              <CCol>
+
+                  <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '2px' }}>
+                          <CCardBody className="d-flex align-items-center" style={{ padding: '0.25rem 0.5rem', height: '100%' }} >
+                              <p style={{ margin: 0, fontSize: '0.78rem', fontWeight: '500' }}>General</p>
+                          </CCardBody>
+                  </CCard>
+                  <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '-5px' }}>
+                      <CCardBody
+                        style={{
+                          padding: '0.25rem 0.5rem',
+                          height: '100%',
+                          backgroundColor: 'white',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        {/* Row 1 */}
+                        <CRow style={{ height: '25px' }}>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Special</p>
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Pin Mailer</p>
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Destroy Status</p>
+                          </CCol>
+                        </CRow>
+
+                        {/* Row 2 */}
+                        <CRow style={{ height: '25px' }}>
+                          <CCol style={{ display: 'flex', alignItems: 'center'}}>
+                            
+                            <TextField
+                              placeholder="0"
+                              value={selectedGroupRow?.billingSp || ''}
+                              size="small"
+                              fullWidth
+                              disabled={!isEditable}
+                              sx={sharedSx}
+                            />
+
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            
+                          <TextField
+                              placeholder="xxx"
+                              value={
+                                REPORT_BREAK_OPTIONS.find(
+                                  opt => opt.value === String(selectedGroupRow?.reportBreakFlag ?? '')
+                                )?.label || ''
+                              }
+                              size="small"
+                              fullWidth
+                              disabled={!isEditable}
+                              sx={sharedSx}
+                            />
+
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            
+                          <TextField
+                              placeholder="xxx"
+                              value={
+                                SEARCH_TYPE_OPTIONS.find(
+                                  opt => opt.value === String(selectedGroupRow?.chLookUpType ?? '')
+                                )?.label || ''
+                              }
+                              size="small"
+                              fullWidth
+                              disabled={!isEditable}
+                              sx={sharedSx}
+                            />
+
+                          </CCol>
+                        </CRow>
+                      </CCardBody>
+                    </CCard>
+
+                    <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '-5px' }}>
+                      <CCardBody
+                        style={{
+                          padding: '0.25rem 0.5rem',
+                          height: '100%',
+                          backgroundColor: 'white',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        {/* Row 1 */}
+                        <CRow style={{ height: '25px' }}>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Customer Type</p>
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Return Status</p>
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            
+                          </CCol>
+                        </CRow>
+
+                        {/* Row 2 */}
+                        <CRow style={{ height: '25px' }}>
+                          <CCol style={{ display: 'flex', alignItems: 'center'}}>
+                            
+                            <TextField
+                              placeholder="0"
+                              value={selectedGroupRow?.billingSp || ''}
+                              size="small"
+                              fullWidth
+                              disabled={!isEditable}
+                              sx={sharedSx}
+                            />
+
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                            
+                          <TextField
+                              placeholder="xxx"
+                              value={
+                                REPORT_BREAK_OPTIONS.find(
+                                  opt => opt.value === String(selectedGroupRow?.reportBreakFlag ?? '')
+                                )?.label || ''
+                              }
+                              size="small"
+                              fullWidth
+                              disabled={!isEditable}
+                              sx={sharedSx}
+                            />
+
+                          </CCol>
+                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
+                          </CCol>
+                        </CRow>
+                      </CCardBody>
+                    </CCard>
+
+                    <CCard style={{ marginTop: '-5px', marginBottom: '10px' }}>
+                    <CCardBody
+                        style={{
+                          padding: '0.8rem',
+                          backgroundColor: 'white',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          rowGap: '0px'
+                        }}
+                      >
+                        {/* Row 1 */}
+                        <CRow style={{ height: '25px' }}>
+                        <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 41%', maxWidth: '41%' }}>
+                              {/* Checkboxes */}
+                              <FormControlLabel
+                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
+                                label="Bad Address  "
+                                sx={{
+                                  backgroundColor: 'white',
+                                  pl: 1,
+                                  m: 0,
+                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
+                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
+                                   paddingLeft: '0px', // 👈 reduce left padding of the checkbox
+                                   paddingRight: '0px', // 👈 reduce left padding of the checkbox
+
+                                }}
+                              />
+                          </CCol>
+                          <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 59%', maxWidth: '59%' }}>
+                              {/* Checkboxes */}
+                              <FormControlLabel
+                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
+                                label="Account Research"
+                                sx={{
+                                  backgroundColor: 'white',
+                                  pl: 1,
+                                  m: 0,
+                                  paddingLeft: '2px', // 👈 reduce left padding of the checkbox
+                                  paddingRight: '0px', // 👈 reduce left padding of the checkbox
+                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
+                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
+                                }}
+                              />
+                          </CCol>
+                        </CRow>
+
+                        {/* Row 2 */}
+                        <CRow style={{ height: '25px' }}>
+                        <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 42%', maxWidth: '42%' }}>
+                               {/* Checkboxes */}
+                               <FormControlLabel
+                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
+                                label="Active"
+                                sx={{
+                                  backgroundColor: 'white',
+                                  pl: 1,
+                                  m: 0,
+                                  paddingLeft: '0px', // 👈 reduce left padding of the checkbox
+                                  paddingRight: '0px', // 👈 reduce left padding of the checkbox
+                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
+                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
+                                }}
+                              />
+                          </CCol>
+                          <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 58%', maxWidth: '58%' }}>
+                             <FormControlLabel
+                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
+                                label="Non-Mon 13 on Destroy"
+                                sx={{
+                                  backgroundColor: 'white',
+                                  pl: 1,
+                                  m: 0,
+                                  paddingLeft: '0px', // 👈 reduce left padding of the checkbox
+                                  paddingRight: '0px', // 👈 reduce left padding of the checkbox
+                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
+                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
+                                }}
+                              />
+                          </CCol>
+                        </CRow>
+                      </CCardBody>
+                    </CCard>
+
               </CCol>
             </CRow>
           </div>
@@ -513,7 +740,7 @@ const SysPinConfig = () => {
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow> */}
+      </CRow>  */}
     </div>
   );
 };

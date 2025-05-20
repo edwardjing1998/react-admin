@@ -43,7 +43,7 @@ const ClientReports = ({ data }) => {
         style={{
           flex: 1,
           display: 'grid',
-          gridTemplateColumns: '240px 80px 60px 60px',
+          gridTemplateColumns: '350px 60px',
           rowGap: '0px',
           columnGap: '4px',
           minHeight: '100px',
@@ -52,18 +52,18 @@ const ClientReports = ({ data }) => {
       >
         {/* Header Row */}
         <div style={headerStyle}>Name</div>
-        <div style={headerStyle}>Received</div>
+        {/*<div style={headerStyle}>Received</div>*/}
         <div style={headerStyle}>Type</div>
-        <div style={headerStyle}>Output</div>
+       {/*  <div style={headerStyle}>Output</div>*/}
 
         {/* Data Rows */}
         {pageData.length > 0 ? (
           pageData.map((item, index) => (
             <React.Fragment key={`${item.reportId}-${index}`}>
               <div style={cellStyle}>{item.reportDetails?.queryName?.trim() || ''}</div>
-              <div style={cellStyle}>{item.receiveFlag ? 'Yes' : 'No'}</div>
+             {/*  <div style={cellStyle}>{item.receiveFlag ? 'Yes' : 'No'}</div>*/}
               <div style={cellStyle}>{item.reportDetails?.fileExt || ''}</div>
-              <div style={cellStyle}>{item.outputTypeCd}</div>
+              {/*  <div style={cellStyle}>{item.outputTypeCd}</div>*/}
             </React.Fragment>
           ))
         ) : (

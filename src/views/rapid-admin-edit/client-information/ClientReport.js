@@ -47,7 +47,7 @@ const ClientReport = ({ onRowClick, selectedData }) => {
   };
 
 const columnDefs = [
-    { field: 'reportName', headerName: 'Report Name', filter: true, width: 300 }, // ⬅️ wider
+    { field: 'reportName', headerName: 'Report Name 111', filter: true, width: 300 }, // ⬅️ wider
     {
       field: 'receive',
       headerName: 'Receive',

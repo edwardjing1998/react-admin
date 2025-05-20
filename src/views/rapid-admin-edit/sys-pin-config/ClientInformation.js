@@ -229,8 +229,8 @@ const ClientInformation = ({
     resizable: true,
     minWidth: 120,
     sortable: false,
-    filter: true,
-    floatingFilter: true,
+    filter: false,
+    floatingFilter: false,
   };
 
   const rowClassRules = {

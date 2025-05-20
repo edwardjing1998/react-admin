@@ -23,7 +23,7 @@ import ClientATMCashPrefixes from './ClientATMCashPrefixes.js';
 import ClientReport from './ClientReport.js';
 import ClientEmailSetup from './ClientEmailSetup.js';
 import ClientEmailSetups from './ClientEmailSetups.js';
-import ClientAtmCashPrefix from './ClientAtmCashPrefix.js';
+import EditAtmCashPrefix from './EditAtmCashPrefix.js';
 import ClientInformationB from './ClientInformationB.js';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -166,10 +166,7 @@ const ClientInformationPanel = () => {
 
         <CCol xs={3}>
           <div style={{ backgroundColor: 'white', padding: '12px', borderRadius: '6px' }}>
-            <ClientAtmCashPrefix
-              handleDeleteClick={handleDeleteClick}
-              sysPrinsPrefixes={selectedData.sysPrinsPrefixes}
-            />
+            <EditAtmCashPrefix  sysPrinsPrefixes={selectedData.sysPrinsPrefixes} />
           </div>
           <CCol xs={12}>
             <div style={{ minHeight: '45px', backgroundColor: 'white', borderRadius: '6px' }}></div>

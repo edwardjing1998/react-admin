@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Tabs, Tab } from '@mui/material';
+import { Box, IconButton, Tabs, Tab, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { CRow, CCol } from '@coreui/react';
-import ClientInformationA from '../client-information/ClientInformationA'
-import ClientInformationB from '../client-information/ClientInformationB'
-
+import ClientInformationA from '../client-information/ClientInformationA';
+import ClientInformationB from '../client-information/ClientInformationB';
+import EditAtmCashPrefix from '../client-information/EditAtmCashPrefix';
+import EditClientReport from '../client-information/EditClientReport'
 
 const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => {
   const [tabIndex, setTabIndex] = React.useState(0);
@@ -32,16 +33,27 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
 
       <Box>
         {tabIndex === 0 && (
-          <CRow className="mb-2" style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '8px', height: '620px' }}>
-            <CCol xs={6} style={{ borderRight: '1px solid #ccc', height: '600px' }}>
-              <div style={{ fontSize: '0.78rem', height: '600px' }}>
-                <ClientInformationA selectedGroupRow={selectedGroupRow} isEditable={isEditable} setSelectedGroupRow={setSelectedGroupRow} />
-              </div>
-            </CCol>
-            <CCol xs={6} style={{ height: '100%' }}>
+          <>
+            <CRow className="mb-2" style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '8px', height: '520px' }}>
+              <CCol style={{ flex: '0 0 45%', maxWidth: '45%', borderRight: '1px solid #ccc', height: '420px' }}>
+                <div style={{ fontSize: '0.78rem', height: '420px', paddingTop: '12px' }}>
+                  <ClientInformationA selectedGroupRow={selectedGroupRow} isEditable={isEditable} setSelectedGroupRow={setSelectedGroupRow} />
+                </div>
+              </CCol>
+              <CCol style={{ flex: '0 0 55%', maxWidth: '55%', height: '420px', paddingTop: '12px' }}>
                 <ClientInformationB selectedGroupRow={selectedGroupRow} isEditable={isEditable} setSelectedGroupRow={setSelectedGroupRow} />
-            </CCol>
-          </CRow>
+              </CCol>
+            </CRow>
+            <CRow className="mt-3">
+              <CCol style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Button variant="outlined" size="small">Back</Button>
+              </CCol>
+              <CCol style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <Button variant="contained" size="small">Save</Button>
+                <Button variant="outlined" size="small">Next</Button>
+              </CCol>
+            </CRow>
+          </>
         )}
         {tabIndex === 1 && (
           <Box>
@@ -50,12 +62,12 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
         )}
         {tabIndex === 2 && (
           <Box>
-            <span style={{ fontSize: '0.8rem' }}>Reports tab content here...</span>
+            <EditClientReport  selectedGroupRow={selectedGroupRow} />
           </Box>
         )}
         {tabIndex === 3 && (
           <Box>
-            <span style={{ fontSize: '0.8rem' }}>ATM Prefixes tab content here...</span>
+             <EditAtmCashPrefix  sysPrinsPrefixes={selectedGroupRow.sysPrinsPrefixes} />
           </Box>
         )}
       </Box>

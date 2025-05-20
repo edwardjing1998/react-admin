@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 const PAGE_SIZE = 6; // 4x4 grid
 const COLUMNS = 3;
 
-const ClientAtmAndCashPrefixes = ({ data }) => {
+const PreviewAtmAndCashPrefixes = ({ data }) => {
   const [page, setPage] = useState(0);
 
   const pageCount = Math.ceil((data?.length || 0) / PAGE_SIZE);
@@ -116,4 +116,4 @@ const ClientAtmAndCashPrefixes = ({ data }) => {
   );
 };
 
-export default ClientAtmAndCashPrefixes;
+export default PreviewAtmAndCashPrefixes;
