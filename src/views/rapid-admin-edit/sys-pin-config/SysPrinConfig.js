@@ -6,29 +6,15 @@ import {
   CCardBody
 } from '@coreui/react';
 
-import { Button, Typography } from '@mui/material';
 
 import ClientInformation from './ClientInformation.js';
-import SysPrin from './SysPrin.js';
 import ClientAutoComplete from '../client-search-input/ClientAutoCompleteInput.js'
-import ClientInformationA from './ClientInformationA'
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox'
-import PreviewAtmAndCashPrefixes from './PreviewAtmAndCashPrefixes.js';
-import ClientReports from './ClientReports.js';
-import ClientSysPrinList from './ClientSysPrinList.js';
-import NewClientWindow from './NewClientWindow.js';
+import EditClientWindow from './EditClientWindow.js';
+import PreviewSysPrinInformation from './PreviewSysPrinInformation.js';
 import Drawer from '@mui/material/Drawer';
 import BusinessIcon from '@mui/icons-material/Business';
 import ComputerIcon from '@mui/icons-material/Computer';
-
-
-import {
-  REPORT_BREAK_OPTIONS,
-  SEARCH_TYPE_OPTIONS
-} from './field-value-mapping';
-
+import PreviewClientInformation from './PreviewClientInformation'
 
 
 const SysPinConfig = () => {
@@ -54,8 +40,19 @@ const SysPinConfig = () => {
     address: '',
     billingSp: '',
     atmCashRule: '',
+    notes:'',
+    special:'',
+    pinMailer:'',
+    destroyStatus:'',
+    custType:'',
+    returnStatus:'',
+    addrFlag:'',
+    astatRch:'',
+    active:'',
+    nm13:'',
     sysPrinsPrefixes: [],
   });
+
 
   const sharedSx = {
     '& .MuiInputBase-root': {
@@ -83,7 +80,7 @@ const SysPinConfig = () => {
 
   useEffect(() => {
     setClientList([]); // ✅ Clear old page data
-    fetch(`http://localhost:4444/api/clients-paging?page=${currentPage}&size=20`)
+    fetch(`http://localhost:4444/api/clients-paging?page=${currentPage}&size=25`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch paged clients');
@@ -103,7 +100,7 @@ const SysPinConfig = () => {
     setSelectedData((prev) => ({ ...prev, [field]: checked }));
   };
 
-  const [newClientWidow, setNewClientWidow] = useState(false);
+  const [editClientWindow, setEditClientWindow] = useState(false);
 
 
   const handleRowClick = (rowData) => {
@@ -137,6 +134,28 @@ const SysPinConfig = () => {
       sysPrins: sysPrinsList,
       sysPrin: rowData.sysPrin || '',
       invalidDelivAreas: specificInvalidDelivAreas,
+      notes: rowData.notes || matchedSysPrin?.notes || '',
+      statA: rowData.statA || matchedSysPrin?.statA || '',
+      statB: rowData.statB || matchedSysPrin?.statB || '',
+      statC: rowData.statC || matchedSysPrin?.statC || '',
+      statE: rowData.statE || matchedSysPrin?.statE || '',
+      statF: rowData.statF || matchedSysPrin?.statF || '',
+      statI: rowData.statI || matchedSysPrin?.statI || '',
+      statL: rowData.statL || matchedSysPrin?.statL || '',
+      statU: rowData.statU || matchedSysPrin?.statU || '',
+      statD: rowData.statD || matchedSysPrin?.statD || '',
+      statO: rowData.statO || matchedSysPrin?.statO || '',
+      statX: rowData.statX || matchedSysPrin?.statX || '',
+      statZ: rowData.statZ || matchedSysPrin?.statZ || '',
+      special: rowData.special || matchedSysPrin?.special || '',
+      pinMailer: rowData.pinMailer || matchedSysPrin?.pinMailer || '',
+      destroyStatus: rowData.destroyStatus || matchedSysPrin?.destroyStatus || '',
+      custType: rowData.custType || matchedSysPrin?.custType || '',
+      returnStatus: rowData.returnStatus || matchedSysPrin?.returnStatus || '',
+      addrFlag: rowData.addrFlag || matchedSysPrin?.addrFlag || '',
+      astatRch: rowData.astatRch || matchedSysPrin?.astatRch || '',
+      active: rowData.active || matchedSysPrin?.active || '',
+      nm13: rowData.nm13 || matchedSysPrin?.nm13 || '',
     }));
   };
 
@@ -180,7 +199,7 @@ const SysPinConfig = () => {
         <CCol style={{ flex: '0 0 30%', maxWidth: '30%' }}>
           <CCard style={{ height: '100%' }}>
             <CCardBody style={{ height: '100%', padding: 0 }}>
-              <div style={{ height: '950px', overflow: 'hidden' }}>
+              <div style={{ height: '1200px', overflow: 'hidden' }}>
                   <ClientInformation
                     onRowClick={handleRowClick}
                     clientList={clientList}
@@ -207,498 +226,13 @@ const SysPinConfig = () => {
         <CCol style={{ flex: '0 0 70%', maxWidth: '70%' }}>
           <CCard style={{ height: '100%' }}>
             <CCardBody style={{ height: '100%', padding: 0 }}>
-              <div style={{ height: '950px', overflow: 'hidden' }}>
-                <CRow className="p-3" style={{ height: '950px' }}>
+              <div style={{ height: '1200px', overflow: 'hidden' }}>
+                <CRow className="p-3" style={{ height: '1200px' }}>
                  <CCol style={{ flex: '0 0 56%', maxWidth: '56%', height: '100%' }}>
-
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '2px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                          <p style={{ margin: 0, fontSize:'0.78rem', fontWeight: '500' }}> {selectedGroupRow
-                              ? `Selected Client: ${selectedGroupRow.client} - ${selectedGroupRow.name || ''}`
-                              : 'No Client Found'}
-                          </p>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        style={{
-                          padding: '0.25rem 0.5rem',
-                          height: '100%',
-                          backgroundColor: 'white',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        {/* Row 1 */}
-                        <CRow style={{ height: '25px' }}>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Billing Sys/Prin</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Report Breaks</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Search Type</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Memo Type</p>
-                          </CCol>
-                        </CRow>
-
-                        {/* Row 2 */}
-                        <CRow style={{ height: '25px' }}>
-                          <CCol style={{ display: 'flex', alignItems: 'center'}}>
-                            
-                            <TextField
-                              placeholder="0"
-                              value={selectedGroupRow?.billingSp || ''}
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          <TextField
-                              placeholder="xxx"
-                              value={
-                                REPORT_BREAK_OPTIONS.find(
-                                  opt => opt.value === String(selectedGroupRow?.reportBreakFlag ?? '')
-                                )?.label || ''
-                              }
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          <TextField
-                              placeholder="xxx"
-                              value={
-                                SEARCH_TYPE_OPTIONS.find(
-                                  opt => opt.value === String(selectedGroupRow?.chLookUpType ?? '')
-                                )?.label || ''
-                              }
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          <TextField
-                              placeholder="xxx"
-                              value={selectedGroupRow?.memoType || ''}
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                        </CRow>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ marginTop: '15px', marginBottom: '10px' }}>
-                    <CCardBody
-                        style={{
-                          padding: '0.8rem',
-                          backgroundColor: 'white',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          rowGap: '0px'
-                        }}
-                      >
-                        {/* Row 1 */}
-                        <CRow style={{ height: '25px' }}>
-                        <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 40%', maxWidth: '40%' }}>
-                              {/* Checkboxes */}
-                              <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Client Active"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                          <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 60%', maxWidth: '60%' }}>
-                              {/* Checkboxes */}
-                              <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Positive Reporting"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                        </CRow>
-
-                        {/* Row 2 */}
-                        <CRow style={{ height: '25px' }}>
-                        <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 40%', maxWidth: '40%' }}>
-                               {/* Checkboxes */}
-                               <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Sub Client"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                          <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 60%', maxWidth: '60%' }}>
-                             <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Exclude From Postage Reports"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                        </CRow>
-
-                        {/* Row 3 */}
-                        <CRow style={{ height: '25px' }}>
-                        <CCol style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: '4px' }}>
-                             <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Check Here: If American Express Issued"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                        </CRow>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                        <span style={{ fontSize: '0.85rem' }}>Client Sys/Prin List</span>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                        <div style={{ width: '100%', height: '100%' }}>
-                          <ClientSysPrinList data={selectedGroupRow?.sysPrins || []} />
-                        </div>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                        <span style={{ fontSize: '0.85rem' }}>Client Reports</span>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                        <div style={{ width: '100%', height: '100%' }}>
-                          <ClientReports data={selectedGroupRow?.reportOptions || []}  />
-                        </div>
-                      </CCardBody>
-                    </CCard>
-                    <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                        <span style={{ fontSize: '0.85rem' }}>ATM Cash Prefixes</span>
-                      </CCardBody>
-                  </CCard>
-                  <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                        <div style={{ width: '100%', height: '100%' }}>
-                           <PreviewAtmAndCashPrefixes data={selectedGroupRow?.sysPrinsPrefixes || []} />
-                        </div>
-                      </CCardBody>
-                  </CCard>
-                  <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '25px' }}>
-                      <CCardBody
-                        className="d-flex align-items-center"
-                        style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-                      >
-                          <div>
-                            <Button variant="outlined" size="small" sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}>Delete Client</Button>
-                            <Button variant="outlined" size="small" sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}>Edit Client</Button>
-                            <Button variant="outlined" onClick={() => setNewClientWidow(true)} size="small" sx={{ fontSize: '0.78rem', textTransform: 'none' }}>New Client</Button>
-                          </div>
-                      </CCardBody>
-                  </CCard>
+                  <PreviewClientInformation setEditClientWindow={setEditClientWindow} selectedGroupRow={selectedGroupRow} selectedData={selectedData} />
               </CCol>
               <CCol>
-
-                  <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '2px' }}>
-                          <CCardBody className="d-flex align-items-center" style={{ padding: '0.25rem 0.5rem', height: '100%' }} >
-                              <p style={{ margin: 0, fontSize: '0.78rem', fontWeight: '500' }}>General</p>
-                          </CCardBody>
-                  </CCard>
-                  <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '-5px' }}>
-                      <CCardBody
-                        style={{
-                          padding: '0.25rem 0.5rem',
-                          height: '100%',
-                          backgroundColor: 'white',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        {/* Row 1 */}
-                        <CRow style={{ height: '25px' }}>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Special</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Pin Mailer</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Destroy Status</p>
-                          </CCol>
-                        </CRow>
-
-                        {/* Row 2 */}
-                        <CRow style={{ height: '25px' }}>
-                          <CCol style={{ display: 'flex', alignItems: 'center'}}>
-                            
-                            <TextField
-                              placeholder="0"
-                              value={selectedGroupRow?.billingSp || ''}
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          <TextField
-                              placeholder="xxx"
-                              value={
-                                REPORT_BREAK_OPTIONS.find(
-                                  opt => opt.value === String(selectedGroupRow?.reportBreakFlag ?? '')
-                                )?.label || ''
-                              }
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          <TextField
-                              placeholder="xxx"
-                              value={
-                                SEARCH_TYPE_OPTIONS.find(
-                                  opt => opt.value === String(selectedGroupRow?.chLookUpType ?? '')
-                                )?.label || ''
-                              }
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                        </CRow>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ height: '50px', marginBottom: '4px', marginTop: '-5px' }}>
-                      <CCardBody
-                        style={{
-                          padding: '0.25rem 0.5rem',
-                          height: '100%',
-                          backgroundColor: 'white',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        {/* Row 1 */}
-                        <CRow style={{ height: '25px' }}>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Customer Type</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            <p style={{ margin: 0, fontSize: '0.78rem' }}>Return Status</p>
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          </CCol>
-                        </CRow>
-
-                        {/* Row 2 */}
-                        <CRow style={{ height: '25px' }}>
-                          <CCol style={{ display: 'flex', alignItems: 'center'}}>
-                            
-                            <TextField
-                              placeholder="0"
-                              value={selectedGroupRow?.billingSp || ''}
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                            
-                          <TextField
-                              placeholder="xxx"
-                              value={
-                                REPORT_BREAK_OPTIONS.find(
-                                  opt => opt.value === String(selectedGroupRow?.reportBreakFlag ?? '')
-                                )?.label || ''
-                              }
-                              size="small"
-                              fullWidth
-                              disabled={!isEditable}
-                              sx={sharedSx}
-                            />
-
-                          </CCol>
-                          <CCol style={{ display: 'flex', alignItems: 'center' }}>
-                          </CCol>
-                        </CRow>
-                      </CCardBody>
-                    </CCard>
-
-                    <CCard style={{ marginTop: '-5px', marginBottom: '10px' }}>
-                    <CCardBody
-                        style={{
-                          padding: '0.8rem',
-                          backgroundColor: 'white',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          rowGap: '0px'
-                        }}
-                      >
-                        {/* Row 1 */}
-                        <CRow style={{ height: '25px' }}>
-                        <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 41%', maxWidth: '41%' }}>
-                              {/* Checkboxes */}
-                              <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Bad Address  "
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                   paddingLeft: '0px', // 👈 reduce left padding of the checkbox
-                                   paddingRight: '0px', // 👈 reduce left padding of the checkbox
-
-                                }}
-                              />
-                          </CCol>
-                          <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 59%', maxWidth: '59%' }}>
-                              {/* Checkboxes */}
-                              <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Account Research"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  paddingLeft: '2px', // 👈 reduce left padding of the checkbox
-                                  paddingRight: '0px', // 👈 reduce left padding of the checkbox
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                        </CRow>
-
-                        {/* Row 2 */}
-                        <CRow style={{ height: '25px' }}>
-                        <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 42%', maxWidth: '42%' }}>
-                               {/* Checkboxes */}
-                               <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Active"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  paddingLeft: '0px', // 👈 reduce left padding of the checkbox
-                                  paddingRight: '0px', // 👈 reduce left padding of the checkbox
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                          <CCol style={{  display: 'flex', alignItems: 'center', justifyContent: 'flex-start',  paddingLeft: '4px', flex:'0 0 58%', maxWidth: '58%' }}>
-                             <FormControlLabel
-                                control={<Checkbox size="small" checked={!!selectedData.active} onChange={handleCheckboxChange('active')} disabled={!isEditable} />}
-                                label="Non-Mon 13 on Destroy"
-                                sx={{
-                                  backgroundColor: 'white',
-                                  pl: 1,
-                                  m: 0,
-                                  paddingLeft: '0px', // 👈 reduce left padding of the checkbox
-                                  paddingRight: '0px', // 👈 reduce left padding of the checkbox
-                                  '& .MuiFormControlLabel-label': { fontSize: '0.78rem', color: 'black' },
-                                  '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
-                                }}
-                              />
-                          </CCol>
-                        </CRow>
-                      </CCardBody>
-                    </CCard>
-
+                  <PreviewSysPrinInformation  setEditClientWindow={setEditClientWindow}  selectedData={selectedData} selectedGroupRow={selectedGroupRow}/>
               </CCol>
             </CRow>
           </div>
@@ -709,19 +243,16 @@ const SysPinConfig = () => {
 
   <Drawer
         anchor="right"
-        open={newClientWidow}
-        onClose={() => setNewClientWidow(false)}
-        PaperProps={{ sx: { width: '30vw', padding: '16px' } }}
+        open={editClientWindow}
+        onClose={() => setEditClientWindow(false)}
+        PaperProps={{ sx: { width: '35vw', padding: '16px' } }}
       >
-        <NewClientWindow onClose={() => setNewClientWidow(false)} selectedGroupRow={selectedGroupRow} setSelectedGroupRow={setSelectedGroupRow} />
+        <EditClientWindow onClose={() => setEditClientWindow(false)} selectedGroupRow={selectedGroupRow} setSelectedGroupRow={setSelectedGroupRow} />
   </Drawer>
 
-  
 
 
-
-
-      {/* Left Panel (30%)
+      {/* Left Panel (30%) 
       <CRow className="mb-3">
         <CCol xs={12}>
             <CCard className="h-100">
@@ -740,7 +271,7 @@ const SysPinConfig = () => {
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>  */}
+      </CRow> */}
     </div>
   );
 };

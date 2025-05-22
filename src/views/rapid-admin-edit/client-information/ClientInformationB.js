@@ -26,16 +26,16 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
   const sharedSx = {
     '& .MuiInputBase-root': {
       height: '30px',           // Set total height of the input box
-      fontSize: '0.75rem',
+      fontSize: '0.78rem',
     },
     '& .MuiInputBase-input': {
       padding: '4px 4px',       // Inner padding
       height: '30px',           // Force smaller height for input
-      fontSize: '0.75rem',
+      fontSize: '0.78rem',
       lineHeight: '1rem',
     },
     '& .MuiInputLabel-root': {
-      fontSize: '0.75rem',
+      fontSize: '0.78rem',
       lineHeight: '1rem',
     },
     '& .MuiInputBase-input.Mui-disabled': {
@@ -83,17 +83,17 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
           backgroundColor: 'white',
           '& .MuiInputBase-root': {
             height: '30px', // ⬆️ Increased from default (~36px)
-            fontSize: '0.75rem',
+            fontSize: '0.78rem',
           },
           '& .MuiSelect-select': {
             padding: '8px 12px', // ⬆️ Vertical padding for taller field
-            fontSize: '0.75rem',
+            fontSize: '0.78rem',
             display: 'flex',
             alignItems: 'center',
           },
         }}
       >
-        <InputLabel id="report-breaks-label" sx={{ fontSize: '0.75rem' }}>Report Breaks</InputLabel>
+        <InputLabel id="report-breaks-label" sx={{ fontSize: '0.78rem' }}>Report Breaks</InputLabel>
         <Select
           labelId="report-breaks-label"
           id="report-breaks"
@@ -115,16 +115,16 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
             backgroundColor: 'white',
             minHeight: '34px',           // limit container height
             '& .MuiFormLabel-root': {
-              fontSize: '0.75rem',       // smaller label
+              fontSize: '0.78rem',       // smaller label
               lineHeight: '1rem',
             },
             '& .MuiInputBase-root': {
               height: '30px',            // total height of select box
-              fontSize: '0.75rem',
+              fontSize: '0.78rem',
             },
             '& .MuiSelect-select': {
               padding: '4px 8px',        // reduced padding inside dropdown
-              fontSize: '0.75rem',
+              fontSize: '0.78rem',
             },
             '& .Mui-disabled': {
               color: 'black',
@@ -162,11 +162,11 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
               backgroundColor: 'white',
               pl: 1,
               mt: 0,
-              mb: 1,
+              mb: -1,
               lineHeight: 1,
               minHeight: '24px', // ⬇️ constrain overall height
               '& .MuiFormControlLabel-label': {
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 color: 'black',
                 paddingTop: '2px',
               },
@@ -191,11 +191,11 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
               backgroundColor: 'white',
               pl: 1,
               mt: 0,
-              mb: 1,
+              mb: -1,
               lineHeight: 1,
               minHeight: '24px', // ⬇️ constrain overall height
               '& .MuiFormControlLabel-label': {
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 color: 'black',
                 paddingTop: '2px',
               },
@@ -220,9 +220,34 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
               backgroundColor: 'white',
               pl: 1,
               mt: 0,                // reduce top margin
-              mb: 1,                // reduce bottom margin
+              mb: -1,                // reduce bottom margin
               '& .MuiFormControlLabel-label': {
-                fontSize: '0.75rem',     // smaller label
+                fontSize: '0.78rem',     // smaller label
+                color: 'black',
+                lineHeight: '1rem',
+              },
+              '& .Mui-disabled + .MuiFormControlLabel-label': { color: 'black' },
+            }}
+          />
+
+       <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={!!selectedGroupRow.excludeFromReport}
+                onChange={handleCheckboxChange('excludeFromReport')}
+                disabled={!isEditable}
+                sx={{ padding: '2px' }} // minimize checkbox spacing
+              />
+            }
+            label="Exclude From Postage Reports"
+            sx={{
+              backgroundColor: 'white',
+              pl: 1,
+              mt: 0,                // reduce top margin
+              mb: -1,                // reduce bottom margin
+              '& .MuiFormControlLabel-label': {
+                fontSize: '0.78rem',     // smaller label
                 color: 'black',
                 lineHeight: '1rem',
               },
@@ -247,7 +272,7 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
               mt: '-4px',
               mb: '-4px',
               '& .MuiFormControlLabel-label': {
-                fontSize: '0.75rem',
+                fontSize: '0.78rem',
                 color: 'black',
                 lineHeight: '1rem',
               },

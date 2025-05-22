@@ -23,7 +23,7 @@ const ClientInformation = ({
 }) => {
   const [selectedClient, setSelectedClient] = useState('ALL');
   const [tableData, setTableData] = useState([]);
-  const [pageSize] = useState(20);
+  const [pageSize] = useState(25);
   const [expandedGroups, setExpandedGroups] = useState({});
   const gridApiRef = useRef(null);
 
@@ -81,7 +81,7 @@ const ClientInformation = ({
         ),
         client: clientId,
         ...clientGroup,
-        memoType:'Pending'
+        memoType:'Pending',
       });
 
       if (isExpanded) {
@@ -143,7 +143,7 @@ const ClientInformation = ({
     if (isWildcardMode && typeof onFetchWildcardPage === 'function') {
       onFetchWildcardPage(nextPage);
     } else {
-      fetch(`http://localhost:4444/api/clients-paging?page=${nextPage}&size=20`)
+      fetch(`http://localhost:4444/api/clients-paging?page=${nextPage}&size=25`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch clients');
@@ -175,7 +175,7 @@ const ClientInformation = ({
   const resetClientList = () => {
     setClientList([]);
     setCurrentPage(0);
-    fetch(`http://localhost:4444/api/clients-paging?page=0&size=20`)
+    fetch(`http://localhost:4444/api/clients-paging?page=0&size=25`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch initial clients');
@@ -269,7 +269,7 @@ const ClientInformation = ({
     <div className="d-flex flex-column h-100">
       <CRow className="flex-grow-1">
         <CCol xs={12} className="d-flex flex-column h-100">
-        <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '950px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
+        <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '1200px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
             <div style={{ flex: 1, overflow: 'hidden' }}>
             <div className="ag-grid-container ag-theme-quartz no-grid-border"
                  style={{

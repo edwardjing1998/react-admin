@@ -6,6 +6,7 @@ import ClientInformationA from '../client-information/ClientInformationA';
 import ClientInformationB from '../client-information/ClientInformationB';
 import EditAtmCashPrefix from '../client-information/EditAtmCashPrefix';
 import EditClientReport from '../client-information/EditClientReport'
+import ClientEmailSetup from '../client-information/ClientEmailSetup'
 
 const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => {
   const [tabIndex, setTabIndex] = React.useState(0);
@@ -25,10 +26,10 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
       </Box>
 
       <Tabs value={tabIndex} onChange={handleTabChange} variant="fullWidth" sx={{ mt: 1, mb: 2 }}>
-        <Tab label="General" sx={{ fontSize: '0.75rem' }} />
-        <Tab label="Sys/Prin" sx={{ fontSize: '0.75rem' }} />
-        <Tab label="Reports" sx={{ fontSize: '0.75rem' }} />
-        <Tab label="ATM Prefixes" sx={{ fontSize: '0.75rem' }} />
+        <Tab label="General" sx={{ fontSize: '0.78rem', textTransform: 'none',minWidth: 80, maxWidth: 80 }} />
+        <Tab label="Email Setup" sx={{ fontSize: '0.78rem', textTransform: 'none', minWidth: 120, maxWidth: 120 }} />
+        <Tab label="Reports" sx={{ fontSize: '0.78rem', textTransform: 'none', minWidth: 80, maxWidth: 80 }} />
+        <Tab label="ATM Cash Prefixes" sx={{ fontSize: '0.78rem', textTransform: 'none', minWidth: 160, maxWidth: 160 }} />
       </Tabs>
 
       <Box>
@@ -57,7 +58,7 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
         )}
         {tabIndex === 1 && (
           <Box>
-            <span style={{ fontSize: '0.8rem' }}>Sys/Prin tab content here...</span>
+            <ClientEmailSetup selectedGroupRow={selectedGroupRow} />
           </Box>
         )}
         {tabIndex === 2 && (

@@ -11,7 +11,7 @@ import {
   CButton,
 } from '@coreui/react';
 
-const ClientEmailSetup = ({ selectedData }) => {
+const ClientEmailSetup = ({ selectedGroupRow }) => {
   const [emailList, setEmailList] = useState([]);
   const [options, setOptions] = useState([]);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
@@ -28,10 +28,10 @@ const ClientEmailSetup = ({ selectedData }) => {
   ];
 
   useEffect(() => {
-    if (selectedData?.clientEmail && selectedData.clientEmail.length > 0) {
-      setEmailList(selectedData.clientEmail);
+    if (selectedGroupRow?.clientEmail && selectedGroupRow.clientEmail.length > 0) {
+      setEmailList(selectedGroupRow.clientEmail);
 
-      const formattedOptions = selectedData.clientEmail.map(
+      const formattedOptions = selectedGroupRow.clientEmail.map(
         (email) =>
           `${email.emailNameTx} <${email.emailAddressTx}>${email.carbonCopyFlag ? ' (CC)' : ''}`
       );
@@ -39,12 +39,12 @@ const ClientEmailSetup = ({ selectedData }) => {
       setOptions(formattedOptions);
       setSelectedRecipients([formattedOptions[0]]);
 
-      const first = selectedData.clientEmail[0];
+      const first = selectedGroupRow.clientEmail[0];
       updateFormFromEmail(first);
     } else {
       resetForm();
     }
-  }, [selectedData]);
+  }, [selectedGroupRow]);
 
   const updateFormFromEmail = (email) => {
     setName(email.emailNameTx || '');
@@ -100,7 +100,7 @@ const ClientEmailSetup = ({ selectedData }) => {
   
     try {
       const res = await fetch(
-        `http://localhost:4444/api/client-email/delete?clientId=${selectedData.client}&emailAddress=${encodeURIComponent(emailObj.emailAddressTx)}`,
+        `http://localhost:4444/api/client-email/delete?clientId=${selectedGroupRow.client}&emailAddress=${encodeURIComponent(emailObj.emailAddressTx)}`,
         { method: 'DELETE' }
       );
   
@@ -147,7 +147,7 @@ const ClientEmailSetup = ({ selectedData }) => {
     const mailServerId = emailServers.indexOf(emailServer);
     const payload = {
       id: {
-        clientId: selectedData.client,
+        clientId: selectedGroupRow.client,
         emailAddressTx: emailAddress,
       },
       reportId: 0,
