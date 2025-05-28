@@ -57,6 +57,8 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 // Rapid Admin -> Edit
 const SysPrinConfig = React.lazy(() => import('./views/rapid-admin-edit/sys-pin-config/SysPrinConfig'))
 const ClientInformationPanel = React.lazy(() => import('./views/rapid-admin-edit/client-information/ClientInformationPanel'))
+const ClientInformationPage = React.lazy(() => import('./modules/edit/client-information/ClientInformationPage'))
+
 
 const GlobalSettingForm = React.lazy(() => import('./views/rapid-admin-edit/global-setting/GlobalSettingForm'))
 const DailyMessage = React.lazy(() => import('./views/rapid-admin-edit/daily-message/DailyMessage'))
@@ -203,6 +205,7 @@ const routes = [
   { path: '/edit/sys-prin-config-new', name: 'SysPrinConfigs', element: SysPrinConfigs },
 
   { path: '/edit/client-information', name: 'ClientInformationPanel', element: ClientInformationPanel },
+  { path: '/edit/client-information-new', name: 'ClientInformationPage', element: ClientInformationPage },
 
   { path: '/eidt/receive-files', name: 'ReceivingFiles', element: ReceivingFiles },
   { path: '/edit/email-setup', name: 'EmailSetup', element: EmailSetup },

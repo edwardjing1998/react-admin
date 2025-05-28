@@ -7,22 +7,22 @@ import {
 } from '@coreui/react';
 
 
-import ClientInformation from './ClientInformation.js';
-import ClientAutoComplete from '../client-search-input/ClientAutoCompleteInput.js'
-import EditClientWindow from './EditClientWindow.js';
-import PreviewSysPrinInformation from './PreviewSysPrinInformation.js';
+import AutoCompleteInputBox from '../../../components/AutoCompleteInputBox'
+import EditClientWindow from './EditClientWindow';
+import PreviewSysPrinInformation from './sys-prin-config/PreviewSysPrinInformation';
 import Drawer from '@mui/material/Drawer';
 import BusinessIcon from '@mui/icons-material/Business';
 import ComputerIcon from '@mui/icons-material/Computer';
 import PreviewClientInformation from './PreviewClientInformation'
+import { defaultSelectedData, mapRowDataToSelectedData } from './utils/SelectedData';
+import NavigationPanel from './NavigationPanel';
+import { fetchClientsPaging, fetchWildcardPage } from './utils/ClientService'; // adjust the path as needed
 
-
-const SysPinConfig = () => {
+const ClientInformationPage = () => {
   const [clientList, setClientList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0); 
   const [inputValue, setInputValue] = useState('');
   const [isWildcardMode, setIsWildcardMode] = useState(false);
-  const [isEditable, setIsEditable] = useState(false);
   const [selectedGroupRow, setSelectedGroupRow] = useState(null);
 
   const handleClientsFetched = (fetchedClients) => {
@@ -34,74 +34,22 @@ const SysPinConfig = () => {
     });
   };
 
-  const [selectedData, setSelectedData] = useState({
-    client: '',
-    name: '',
-    address: '',
-    billingSp: '',
-    atmCashRule: '',
-    notes:'',
-    special:'',
-    pinMailer:'',
-    destroyStatus:'',
-    custType:'',
-    returnStatus:'',
-    addrFlag:'',
-    astatRch:'',
-    active:'',
-    nm13:'',
-    sysPrinsPrefixes: [],
-  });
-
-
-  const sharedSx = {
-    '& .MuiInputBase-root': {
-      height: '20px',           // Set total height of the input box
-      fontSize: '0.75rem',
-    },
-    '& .MuiInputBase-input': {
-      padding: '4px 4px',       // Inner padding
-      height: '30px',           // Force smaller height for input
-      fontSize: '0.75rem',
-      lineHeight: '1rem',
-    },
-    '& .MuiInputLabel-root': {
-      fontSize: '0.75rem',
-      lineHeight: '1rem',
-    },
-    '& .MuiInputBase-input.Mui-disabled': {
-      color: 'black',
-      WebkitTextFillColor: 'black',
-    },
-    '& .MuiInputLabel-root.Mui-disabled': {
-      color: 'black',
-    },
-  };
+  
+  const [selectedData, setSelectedData] = useState(defaultSelectedData);
 
   useEffect(() => {
     setClientList([]); // ✅ Clear old page data
-    fetch(`http://localhost:4444/api/clients-paging?page=${currentPage}&size=25`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch paged clients');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setClientList(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching clients:', error);
-      });
+        fetchClientsPaging(currentPage, 25)
+            .then((data) => {
+            setClientList(data);
+            })
+            .catch((error) => {
+            console.error('Error fetching clients:', error);
+        });
   }, [currentPage]);
 
-  const handleCheckboxChange = (field) => (event) => {
-    const checked = event.target.checked;
-    setSelectedData((prev) => ({ ...prev, [field]: checked }));
-  };
 
   const [editClientWindow, setEditClientWindow] = useState(false);
-
 
   const handleRowClick = (rowData) => {
     const billingSp = rowData.billingSp || '';
@@ -111,52 +59,13 @@ const SysPinConfig = () => {
     const reportOptions = matchedClient?.reportOptions || [];
     const sysPrinsList = matchedClient?.sysPrins || [];
 
-    const matchedSysPrin = sysPrinsList.find(sp =>
-      sp?.id?.sysPrin === rowData.sysPrin || sp?.sysPrin === rowData.sysPrin
-    );
-
-    const specificInvalidDelivAreas = (matchedSysPrin?.invalidDelivAreas || []).map(area => ({
-      ...area,
-      sysPrin: matchedSysPrin?.id?.sysPrin || area.sysPrin,
-    }));
-
     if (rowData.isGroup) {
       setSelectedGroupRow(rowData); // ✅ save the group row
       return; // optionally stop here if you don't want to overwrite selectedData
     }
 
-    setSelectedData((prev) => ({
-      ...prev,
-      ...rowData,
-      sysPrinsPrefixes: atmCashPrefixes,
-      clientEmail: clientEmails,
-      reportOptions: reportOptions,
-      sysPrins: sysPrinsList,
-      sysPrin: rowData.sysPrin || '',
-      invalidDelivAreas: specificInvalidDelivAreas,
-      notes: rowData.notes || matchedSysPrin?.notes || '',
-      statA: rowData.statA || matchedSysPrin?.statA || '',
-      statB: rowData.statB || matchedSysPrin?.statB || '',
-      statC: rowData.statC || matchedSysPrin?.statC || '',
-      statE: rowData.statE || matchedSysPrin?.statE || '',
-      statF: rowData.statF || matchedSysPrin?.statF || '',
-      statI: rowData.statI || matchedSysPrin?.statI || '',
-      statL: rowData.statL || matchedSysPrin?.statL || '',
-      statU: rowData.statU || matchedSysPrin?.statU || '',
-      statD: rowData.statD || matchedSysPrin?.statD || '',
-      statO: rowData.statO || matchedSysPrin?.statO || '',
-      statX: rowData.statX || matchedSysPrin?.statX || '',
-      statZ: rowData.statZ || matchedSysPrin?.statZ || '',
-      special: rowData.special || matchedSysPrin?.special || '',
-      pinMailer: rowData.pinMailer || matchedSysPrin?.pinMailer || '',
-      destroyStatus: rowData.destroyStatus || matchedSysPrin?.destroyStatus || '',
-      custType: rowData.custType || matchedSysPrin?.custType || '',
-      returnStatus: rowData.returnStatus || matchedSysPrin?.returnStatus || '',
-      addrFlag: rowData.addrFlag || matchedSysPrin?.addrFlag || '',
-      astatRch: rowData.astatRch || matchedSysPrin?.astatRch || '',
-      active: rowData.active || matchedSysPrin?.active || '',
-      nm13: rowData.nm13 || matchedSysPrin?.nm13 || '',
-    }));
+    const mappedData = mapRowDataToSelectedData(selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList);
+    setSelectedData(mappedData);
   };
 
   return (
@@ -164,7 +73,7 @@ const SysPinConfig = () => {
      <CRow className="px-3" style={{ height: '100%', marginBottom: '10px' }}>
         {/* Left Panel (30%) */}
         <CCol style={{ flex: '0 0 29%', maxWidth: '29%', paddingLeft: '0px', border: '1px solid #ccc', }}>
-            <ClientAutoComplete
+            <AutoCompleteInputBox
               inputValue={inputValue}
               setInputValue={setInputValue}
               onClientsFetched={handleClientsFetched}
@@ -200,7 +109,7 @@ const SysPinConfig = () => {
           <CCard style={{ height: '100%' }}>
             <CCardBody style={{ height: '100%', padding: 0 }}>
               <div style={{ height: '1200px', overflow: 'hidden' }}>
-                  <ClientInformation
+                  <NavigationPanel
                     onRowClick={handleRowClick}
                     clientList={clientList}
                     setClientList={setClientList} 
@@ -208,15 +117,7 @@ const SysPinConfig = () => {
                     setCurrentPage={setCurrentPage}
                     isWildcardMode={isWildcardMode}
                     setIsWildcardMode={setIsWildcardMode}
-                    onFetchWildcardPage={(page) => {
-                      const keyword = inputValue;
-                      fetch(`http://localhost:4444/api/client/wildcard?keyword=${encodeURIComponent(keyword)}`)
-                        .then((res) => res.json())
-                        .then((newData) => {
-                          setClientList(newData);
-                          setCurrentPage(page);
-                        });
-                    }}                  
+                    onFetchWildcardPage={fetchWildcardPage}                  
                   />
               </div>
             </CCardBody>
@@ -229,7 +130,7 @@ const SysPinConfig = () => {
               <div style={{ height: '1200px', overflow: 'hidden' }}>
                 <CRow className="p-3" style={{ height: '1200px' }}>
                  <CCol style={{ flex: '0 0 56%', maxWidth: '56%', height: '100%' }}>
-                  <PreviewClientInformation setEditClientWindow={setEditClientWindow} selectedGroupRow={selectedGroupRow} selectedData={selectedData} />
+                  <PreviewClientInformation setEditClientWindow={setEditClientWindow} selectedGroupRow={selectedGroupRow} />
               </CCol>
               <CCol style={{ flex: '0 0 44%', maxWidth: '44%', height: '100%' }}>
                   <PreviewSysPrinInformation  setEditClientWindow={setEditClientWindow}  selectedData={selectedData} selectedGroupRow={selectedGroupRow}/>
@@ -276,4 +177,4 @@ const SysPinConfig = () => {
   );
 };
 
-export default SysPinConfig;
+export default ClientInformationPage;
