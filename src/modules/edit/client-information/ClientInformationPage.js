@@ -8,9 +8,9 @@ import {
 
 
 import AutoCompleteInputBox from '../../../components/AutoCompleteInputBox'
-import EditClientWindow from './EditClientWindow';
+import ClientInformationWindowDrawer from './utils/ClientInformationWindowDrawer';
+import SysPrinInformationWindowDrawer from './utils/SysPrinInformationWindowDrawer';
 import PreviewSysPrinInformation from './sys-prin-config/PreviewSysPrinInformation';
-import Drawer from '@mui/material/Drawer';
 import BusinessIcon from '@mui/icons-material/Business';
 import ComputerIcon from '@mui/icons-material/Computer';
 import PreviewClientInformation from './PreviewClientInformation'
@@ -49,7 +49,9 @@ const ClientInformationPage = () => {
   }, [currentPage]);
 
 
-  const [editClientWindow, setEditClientWindow] = useState(false);
+  const [clientInformationWindow, setClientInformationWindow] = useState({ open: false, mode: 'edit' });
+  const [sysPrinInformationWindow, setSysPrinInformationWindow] = useState({ open: false, mode: 'edit' });
+
 
   const handleRowClick = (rowData) => {
     const billingSp = rowData.billingSp || '';
@@ -130,10 +132,10 @@ const ClientInformationPage = () => {
               <div style={{ height: '1200px', overflow: 'hidden' }}>
                 <CRow className="p-3" style={{ height: '1200px' }}>
                  <CCol style={{ flex: '0 0 56%', maxWidth: '56%', height: '100%' }}>
-                  <PreviewClientInformation setEditClientWindow={setEditClientWindow} selectedGroupRow={selectedGroupRow} />
+                  <PreviewClientInformation setClientInformationWindow={setClientInformationWindow} selectedGroupRow={selectedGroupRow} />
               </CCol>
               <CCol style={{ flex: '0 0 44%', maxWidth: '44%', height: '100%' }}>
-                  <PreviewSysPrinInformation  setEditClientWindow={setEditClientWindow}  selectedData={selectedData} selectedGroupRow={selectedGroupRow}/>
+                  <PreviewSysPrinInformation  setSysPrinInformationWindow={setSysPrinInformationWindow}  selectedData={selectedData} selectedGroupRow={selectedGroupRow}/>
               </CCol>
             </CRow>
           </div>
@@ -142,16 +144,21 @@ const ClientInformationPage = () => {
     </CCol>
   </CRow>
 
-  <Drawer
-        anchor="right"
-        open={editClientWindow}
-        onClose={() => setEditClientWindow(false)}
-        PaperProps={{ sx: { width: '35vw', padding: '16px' } }}
-      >
-        <EditClientWindow onClose={() => setEditClientWindow(false)} selectedGroupRow={selectedGroupRow} setSelectedGroupRow={setSelectedGroupRow} />
-  </Drawer>
+    <ClientInformationWindowDrawer
+    open={clientInformationWindow.open}
+    mode={clientInformationWindow.mode}
+    onClose={() => setClientInformationWindow({ open: false, mode: 'edit' })}
+    selectedGroupRow={selectedGroupRow}
+    setSelectedGroupRow={setSelectedGroupRow}
+    />
 
-
+    <SysPrinInformationWindowDrawer
+    open={sysPrinInformationWindow.open}
+    mode={sysPrinInformationWindow.mode}
+    onClose={() => setSysPrinInformationWindow({ open: false, mode: 'edit' })}
+    selectedData={selectedData}
+    setSelectedData={setSelectedData}
+    />
 
       {/* Left Panel (30%) 
       <CRow className="mb-3">

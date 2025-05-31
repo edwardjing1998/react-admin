@@ -2,15 +2,63 @@ import React, { useState, useEffect } from 'react';
 import { Box, IconButton, Tabs, Tab, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { CRow, CCol } from '@coreui/react';
-import EditClientInformationA from './EditClientInformationA';
-import EditClientInformationB from '../client-information/ClientInformationB';
-import EditAtmCashPrefix from '../client-information/EditAtmCashPrefix';
-import EditClientReport from '../client-information/EditClientReport'
-import EditClientEmailSetup from './EditClientEmailSetup'
+import EditClientInformationA from '../EditClientInformationA';
+import EditClientInformationB from '../EditClientInformationB';
+import EditAtmCashPrefix from '../EditAtmCashPrefix';
+import EditClientReport from '../EditClientReport'
+import EditClientEmailSetup from '../EditClientEmailSetup'
 
-const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => {
+const ClientInformationWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow, mode }) => {
   const [tabIndex, setTabIndex] = React.useState(0);
   const [isEditable, setIsEditable] = useState(true);
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch('http://localhost:4444/api/client/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedGroupRow),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Save failed: ${response.status} ${text}`);
+      }
+         const saved = await response.json();
+         console.log('Client saved successfully:', saved);
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while saving. Check console for details.');
+    }
+  };
+  
+
+  useEffect(() => {
+    switch (mode) {
+      case 'new':
+        setIsEditable(true)
+        setSelectedGroupRow({});
+        break
+
+      case 'edit':
+        setIsEditable(true)
+        break
+
+      case 'view':
+        setIsEditable(false)
+        break
+
+      case 'delete':
+        setIsEditable(false)
+        break
+
+      default:
+        // If you ever receive some unexpected mode string, default to read-only:
+        setIsEditable(false)
+        break
+    }
+  }, [mode])
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -50,7 +98,7 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
                 <Button variant="outlined" size="small">Back</Button>
               </CCol>
               <CCol style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                <Button variant="contained" size="small">Save</Button>
+                <Button variant="contained" size="small" onClick={handleSave}>Save</Button>
                 <Button variant="outlined" size="small">Next</Button>
               </CCol>
             </CRow>
@@ -58,17 +106,17 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
         )}
         {tabIndex === 1 && (
           <Box>
-            <EditClientEmailSetup selectedGroupRow={selectedGroupRow} />
+            <EditClientEmailSetup selectedGroupRow={selectedGroupRow} isEditable={isEditable} />
           </Box>
         )}
         {tabIndex === 2 && (
           <Box>
-            <EditClientReport  selectedGroupRow={selectedGroupRow} />
+            <EditClientReport  selectedGroupRow={selectedGroupRow} isEditable={isEditable}  />
           </Box>
         )}
         {tabIndex === 3 && (
           <Box>
-             <EditAtmCashPrefix  sysPrinsPrefixes={selectedGroupRow.sysPrinsPrefixes} />
+             <EditAtmCashPrefix  sysPrinsPrefixes={selectedGroupRow.sysPrinsPrefixes} isEditable={isEditable}  />
           </Box>
         )}
       </Box>
@@ -76,4 +124,4 @@ const NewClientWindow = ({ onClose, selectedGroupRow, setSelectedGroupRow }) => 
   );
 };
 
-export default NewClientWindow;
+export default ClientInformationWindow;

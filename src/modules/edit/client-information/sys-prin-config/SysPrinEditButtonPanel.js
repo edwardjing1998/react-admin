@@ -2,7 +2,7 @@ import React from 'react';
 import { CCard, CCardBody } from '@coreui/react';
 import { Button } from '@mui/material';
 
-const SysPrinEditButtonPanel = ({ setEditClientWindow }) => {
+const SysPrinEditButtonPanel = ({ setSysPrinInformationWindow }) => {
   return (
     <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '25px' }}>
       <CCardBody
@@ -19,7 +19,7 @@ const SysPrinEditButtonPanel = ({ setEditClientWindow }) => {
           </Button>
           <Button
             variant="outlined"
-            onClick={() => setEditClientWindow(true)}
+            onClick={() => setSysPrinInformationWindow({ open: true, mode: 'edit' })}
             size="small"
             sx={{ fontSize: '0.78rem', textTransform: 'none', marginRight: '6px' }}
           >

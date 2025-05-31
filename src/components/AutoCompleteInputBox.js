@@ -5,88 +5,67 @@ import Popper from '@mui/material/Popper';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 
-  const AutoCompleteInputBox = ({ inputValue, setInputValue, onClientsFetched, isWildcardMode, setIsWildcardMode }) => {
+import { fetchClientSuggestions } from '../modules/edit/client-information/utils/ClientService';
 
+const AutoCompleteInputBox = ({ inputValue, setInputValue, onClientsFetched, isWildcardMode, setIsWildcardMode }) => {
   const [options, setOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
   const keywordRef = useRef('');
 
-  const CustomPopper = function (props) {
-    return <Popper {...props} modifiers={[{ name: 'offset', options: { offset: [0, 4] } }]} 
-      style={{ width: 400 }} 
-    />;
-  };
-  
+  const CustomPopper = (props) => (
+    <Popper
+      {...props}
+      modifiers={[{ name: 'offset', options: { offset: [0, 4] } }]}
+      style={{ width: 400 }}
+    />
+  );
 
   useEffect(() => {
-      console.log("🔥 isWildcardMode changed:", isWildcardMode);
-      if(!isWildcardMode){
-        setInputValue('');
-        console.log("🔥 InputValue is empty", inputValue);
-      }     
-    }, [isWildcardMode]);
+    if (!isWildcardMode) setInputValue('');
+  }, [isWildcardMode]);
 
-  // Debounced fetch on input change
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      const trimmed = inputValue.trim();
-      if (trimmed !== '') {
-        const isWildcard = trimmed.endsWith('*');
-        setIsWildcardMode?.(isWildcard);
-        const keyword = encodeURIComponent(trimmed);
-        keywordRef.current = keyword;
+    const delay = setTimeout(() => {
+      const kw = inputValue.trim();
+      if (!kw) return setOptions([]);
 
-        const endpoint = isWildcard
-          ? `http://localhost:4444/api/client/wildcard?keyword=${keyword}`
-          : `http://localhost:4444/api/client-autocomplete?keyword=${keyword}`;
+      fetchClientSuggestions(kw)
+        .then((data) => {
+          const list = data.data || data;      
+          setOptions(list);
 
-        fetch(endpoint)
-          .then((res) => res.json())
-          .then((data) => {
-            const clientData = data.data || data;
-            setOptions(clientData);
-            if (isWildcard && typeof onClientsFetched === 'function' && data != "") {
-              onClientsFetched(clientData);
-            }
-          })
-          .catch((err) => {
-            console.error('Autocomplete fetch error:', err);
-            setOptions([]);
-          });
-      } else {
-        setOptions([]);
-      }
+          if (kw.endsWith('*') && typeof onClientsFetched === 'function') {
+            onClientsFetched(list);
+          }
+
+          setIsWildcardMode?.(kw.endsWith('*'));
+        })
+        .catch((err) => {
+          console.error('Autocomplete fetch error:', err);
+          setOptions([]);
+        });
     }, 300);
 
-    return () => clearTimeout(delayDebounce);
-  }, [inputValue, onClientsFetched]);
+    return () => clearTimeout(delay);
+  }, [inputValue]);  
 
   return (
     <Autocomplete
-      inputValue={inputValue} 
+      inputValue={inputValue}
       freeSolo
       disableClearable
       fullWidth
-      options={options.map(opt =>
-        typeof opt === 'object' && opt.client && opt.name
-          ? `${opt.client} - ${opt.name}`
-          : ''
-      ).filter(Boolean)}
-      onInputChange={(event, value) => setInputValue(value)}
-      onChange={(event, newValue) => setSelectedValue(newValue)}
+      options={options
+        .map((opt) =>
+          typeof opt === 'object' && opt.client && opt.name ? `${opt.client} - ${opt.name}` : ''
+        )
+        .filter(Boolean)}
+      onInputChange={(_, v) => setInputValue(v)}
+      onChange={(_, v) => setSelectedValue(v)}
       PopperComponent={CustomPopper}
       slotProps={{
-        paper: {
-          sx: {
-            fontSize: '0.78rem', // ✅ Apply font size here
-            width: 300,
-          },
-        },
-        listbox: {
-          sx: {
-            fontSize: '0.78rem', // ✅ Also good for extra control
-          },
-        }
+        paper: { sx: { fontSize: '0.78rem', width: 300 } },
+        listbox: { sx: { fontSize: '0.78rem' } },
       }}
       sx={{ width: '100%', backgroundColor: '#fff' }}
       renderInput={(params) => (
@@ -106,24 +85,16 @@ import InputAdornment from '@mui/material/InputAdornment';
             ),
             sx: {
               height: 36,
-              padding: '0 8px',
+              p: '0 8px',
               fontSize: '0.875rem',
               backgroundColor: '#fff',
-              boxShadow: 'none',
-              '& .MuiOutlinedInput-notchedOutline': {
-                border: '1px solid black',
-              },
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                border: '1px solid black',
-              },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                border: '1px solid black',
-              },
-            }
+              '& .MuiOutlinedInput-notchedOutline': { border: '1px solid black' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { border: '1px solid black' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: '1px solid black' },
+            },
           }}
         />
       )}
-      
     />
   );
 };

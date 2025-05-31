@@ -1,6 +1,7 @@
-// src/services/clientService.js
+const baseURL = 'http://localhost:4444/api';
+
 export const fetchClientsPaging = async (page, size) => {
-    const response = await fetch(`http://localhost:4444/api/clients-paging?page=${page}&size=${size}`);
+    const response = await fetch(`${baseURL}/clients-paging?page=${page}&size=${size}`);
     if (!response.ok) {
       throw new Error('Failed to fetch paged clients');
     }
@@ -9,7 +10,7 @@ export const fetchClientsPaging = async (page, size) => {
   
 export const fetchWildcardPage = (page) => {
 const keyword = inputValue;
-fetch(`http://localhost:4444/api/client/wildcard?keyword=${encodeURIComponent(keyword)}`)
+fetch(`${baseURL}/client/wildcard?keyword=${encodeURIComponent(keyword)}`)
     .then((res) => res.json())
     .then((newData) => {
     setClientList(newData);
@@ -20,10 +21,9 @@ fetch(`http://localhost:4444/api/client/wildcard?keyword=${encodeURIComponent(ke
     });
 };
 
-// src/services/ClientService.js
 export const fetchClientsByPage = async (page = 0, pageSize = 25) => {
     try {
-      const response = await fetch(`http://localhost:4444/api/clients-paging?page=${page}&size=${pageSize}`);
+      const response = await fetch(`${baseURL}/clients-paging?page=${page}&size=${pageSize}`);
       if (!response.ok) {
         throw new Error('Failed to fetch clients');
       }
@@ -37,7 +37,7 @@ export const fetchClientsByPage = async (page = 0, pageSize = 25) => {
   
   export const resetClientListService = async (pageSize = 25) => {
     try {
-      const response = await fetch(`http://localhost:4444/api/clients-paging?page=0&size=${pageSize}`);
+      const response = await fetch(`${baseURL}/clients-paging?page=0&size=${pageSize}`);
       if (!response.ok) {
         throw new Error('Failed to fetch initial clients');
       }
@@ -49,3 +49,20 @@ export const fetchClientsByPage = async (page = 0, pageSize = 25) => {
     }
   };
   
+  
+/* ---------------- fetch utility ---------------- */
+async function request(url, opts = {}) {
+  const res = await fetch(url, opts);
+  if (!res.ok) throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+
+export const fetchClientSuggestions = async (keyword) => {
+  const encoded = encodeURIComponent(keyword.trim());
+  const endpoint = keyword.trim().endsWith('*')
+    ? `${baseURL}/client/wildcard?keyword=${encoded}`
+    : `${baseURL}/client-autocomplete?keyword=${encoded}`;
+  return request(endpoint);
+};
+

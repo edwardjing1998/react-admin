@@ -21,15 +21,39 @@ import '../../../scss/sys-prin-configuration/client-information.scss';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const EditClientReport = ({ selectedGroupRow }) => {
+const EditClientReport = ({ selectedGroupRow, isEditable }) => {
 
   const [tableData, setTableData] = useState([]);
   const [reportReceived, setReportReceived] = useState('');
   const [reportDestination, setReportDestination] = useState('');
   const [reportFileType, setReportFileType] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
+  const [reportName, setReportName] = useState('');
 
-  
+  const sharedSx = {
+    '& .MuiInputBase-root': {
+      height: '30px',           
+      fontSize: '0.78rem',
+    },
+    '& .MuiInputBase-input': {
+      padding: '4px 4px',       
+      height: '30px',           
+      fontSize: '0.78rem',
+      lineHeight: '1rem',
+    },
+    '& .MuiInputLabel-root': {
+      fontSize: '0.78rem',
+      lineHeight: '1rem',
+    },
+    '& .MuiInputBase-input.Mui-disabled': {
+      color: 'black',
+      WebkitTextFillColor: 'black',
+    },
+    '& .MuiInputLabel-root.Mui-disabled': {
+      color: 'black',
+    },
+  };
+
   useEffect(() => {
     if (!Array.isArray(selectedGroupRow?.reportOptions)) {
       setTableData([]);
@@ -48,7 +72,7 @@ const EditClientReport = ({ selectedGroupRow }) => {
           ? 'Email'
           : option.emailFlag === 2
           ? 'Web'
-          : 'None', // 0 or any other case
+          : 'None', 
       password: option.reportPasswordTx || '',
     }));
     
@@ -63,110 +87,7 @@ const EditClientReport = ({ selectedGroupRow }) => {
   };
 
 const columnDefs = [
-    { field: 'reportName', headerName: 'Report Name', filter: true, width: 300 }, // ⬅️ wider
-      /*{ Data Rows{
-      field: 'receive',
-      headerName: 'Receive',
-      filter: true,
-      width: 120, 
-      cellRenderer: (params) => (
-        <select
-          value={params.value}
-          onChange={(e) =>
-            params.api.getRowNode(params.node.id).setDataValue('receive', e.target.value)
-          }
-          onClick={(e) => e.stopPropagation()}
-          style={cellSelectStyle}
-        >
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      ),
-    },
-    {
-      field: 'destination',
-      headerName: 'Destination',
-      filter: true,
-      width: 120,
-      cellRenderer: (params) => (
-        <select
-          value={params.value}
-          onChange={(e) =>
-            params.api.getRowNode(params.node.id).setDataValue('destination', e.target.value)
-          }
-          onClick={(e) => e.stopPropagation()}
-          style={cellSelectStyle}
-        >
-          <option value="0">None</option>
-          <option value="1">File</option>
-          <option value="2">Print</option>
-        </select>
-      ),
-    },
-    {
-      field: 'fileText',
-      headerName: 'File Type',
-      filter: true,
-      width: 120,
-      cellRenderer: (params) => (
-        <select
-          value={params.value}
-          onChange={(e) =>
-            params.api.getRowNode(params.node.id).setDataValue('fileText', e.target.value)
-          }
-          onClick={(e) => e.stopPropagation()}
-          style={cellSelectStyle}
-        >
-          <option value="0">None</option>
-          <option value="1">Text</option>
-          <option value="2">Excel</option>
-        </select>
-      ),
-    },
-    {
-      field: 'email',
-      headerName: 'Email',
-      filter: true,
-      width: 120,
-      cellRenderer: (params) => (
-        <select
-          value={params.value}
-          onChange={(e) =>
-            params.api.getRowNode(params.node.id).setDataValue('email', e.target.value)
-          }
-          onClick={(e) => e.stopPropagation()}
-          style={cellSelectStyle}
-        >
-          <option value="Email">Email</option>
-          <option value="Web">Web</option>
-          <option value="None">None</option>
-        </select>
-      ),
-    },
-    {
-      field: 'password',
-      headerName: 'Password',
-      filter: true,
-      width: 120,
-      cellRenderer: (params) => (
-        <input
-          type="password"
-          value={params.value}
-          onChange={(e) =>
-            params.api.getRowNode(params.node.id).setDataValue('password', e.target.value)
-          }
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            width: '100%',
-            fontSize: '12px',
-            height: '30px',
-            padding: '2px 4px',
-            border: '1px solid gray',
-            borderRadius: '4px',
-          }}
-        />
-      ),
-    },}*/
+    { field: 'reportName', headerName: 'Report Name', filter: true, width: 300 },
   ];
 
   const defaultColDef = {
@@ -177,11 +98,11 @@ const columnDefs = [
 
   const handleRowClicked = (event) => {
     const row = event.data;
-    localStorage.setItem('selectedClient', row.reportName);
-    {/* Data Rows
-    if (onRowClick) {
-      onRowClick(row);
-    } */}
+    setReportName(row.reportName);
+    setReportReceived(row.receive === 'Yes' ? '0' : '1');
+    setReportDestination(row.destination);
+    setReportFileType(row.fileText);
+    setPasswordValue(row.password);
   };
 
   return (
@@ -191,7 +112,7 @@ const columnDefs = [
           <CCardBody>
             <div
               className="ag-grid-container ag-theme-quartz"
-              style={{ height: 400 }}
+              style={{ height: 300 }}
             >
               <AgGridReact
                 rowData={tableData}
@@ -205,6 +126,19 @@ const columnDefs = [
           </CCardBody>
         </CCard>
 
+        <CRow className="mb-3" style={{ height: '40px' }}>
+          <CCol xs={12}>
+             <TextField
+                label="Report Name"
+                onChange={(e) => setReportName(e.target.value)}
+                value={reportName}
+                size="small"
+                fullWidth
+                disabled={!isEditable}
+                sx={sharedSx}
+              />
+          </CCol>
+        </CRow>
         <CRow className="mb-3" style={{ height: '40px' }}>
           <CCol xs={6}>
           <FormControl fullWidth size="small" sx={{ backgroundColor: 'white' }}>
@@ -224,9 +158,9 @@ const columnDefs = [
                       }
                     }}
                   >
-                    <MenuItem value="" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Select</MenuItem>
-                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Yes</MenuItem>
-                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>No</MenuItem>
+                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>None</MenuItem>
+                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Yes</MenuItem>
+                    <MenuItem value="2" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>No</MenuItem>
                   </Select>
               </FormControl>
           </CCol>
@@ -248,9 +182,9 @@ const columnDefs = [
                       }
                     }}
                   >
-                    <MenuItem value="" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Select</MenuItem>
-                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>File</MenuItem>
-                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Print</MenuItem>
+                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>None</MenuItem>
+                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>File</MenuItem>
+                    <MenuItem value="2" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Print</MenuItem>
                   </Select>
               </FormControl>
           </CCol>
@@ -275,9 +209,9 @@ const columnDefs = [
                       }
                     }}
                   >
-                    <MenuItem value="" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Select</MenuItem>
-                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Text</MenuItem>
-                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Excel</MenuItem>
+                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>None</MenuItem>
+                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Text</MenuItem>
+                    <MenuItem value="2" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Excel</MenuItem>
                   </Select>
               </FormControl>
           </CCol>
@@ -334,28 +268,6 @@ const columnDefs = [
 
           </CCol>
           <CCol xs={6}>
-              <FormControl fullWidth size="small" sx={{ backgroundColor: 'white' }}>
-                <InputLabel id="atm-cash-input-label" sx={{ fontSize: '0.78rem' }}>
-                  ATM/Cash
-                </InputLabel>
-                <Select
-                    labelId="atm-cash-label"
-                    id="atm-cash-prefix"
-                    label="ATM/Cash"
-                    value=""
-
-                    sx={{
-                      '.MuiSelect-select': {
-                        fontWeight: 300,
-                        fontSize: '0.78rem',
-                      }
-                    }}
-                  >
-                    <MenuItem value="" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Select Rule</MenuItem>
-                    <MenuItem value="0" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Destroy</MenuItem>
-                    <MenuItem value="1" sx={{ fontSize: '0.78rem', fontWeight: 300 }}>Return</MenuItem>
-                  </Select>
-              </FormControl>
           </CCol>
         </CRow>
       </CCol>

@@ -59,8 +59,8 @@ const FilesSentTo = ({ data }) => {
         {/* Data Rows */}
         {pageData.length > 0 ? (
           pageData.map((item, index) => (
-            <React.Fragment key={`${item.reportId}-${index}`}>
-              <div style={cellStyle}>{item.reportDetails?.queryName?.trim() || ''}</div>
+            <React.Fragment key={`${item.vendorId}-${index}`}>
+              <div style={cellStyle}>{item.vendorName?.trim() || ''}</div>
              {/*  <div style={cellStyle}>{item.receiveFlag ? 'Yes' : 'No'}</div>*/}
               {/*<div style={cellStyle}>{item.reportDetails?.fileExt || ''}</div>*/}
               {/*  <div style={cellStyle}>{item.outputTypeCd}</div>*/}

@@ -1,4 +1,3 @@
-// File: ClientInformationB.js
 import React from 'react';
 import {
   Box,
@@ -12,7 +11,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow }) => {
+const EditClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow }) => {
   const handleChange = (field) => (event) => {
     const value = event.target.value;
     setSelectedGroupRow((prev) => ({ ...prev, [field]: value }));
@@ -25,12 +24,12 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
 
   const sharedSx = {
     '& .MuiInputBase-root': {
-      height: '30px',           // Set total height of the input box
+      height: '30px',           
       fontSize: '0.78rem',
     },
     '& .MuiInputBase-input': {
-      padding: '4px 4px',       // Inner padding
-      height: '30px',           // Force smaller height for input
+      padding: '4px 4px',       
+      height: '30px',           
       fontSize: '0.78rem',
       lineHeight: '1rem',
     },
@@ -54,10 +53,9 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      {/* Row 0: Phone */}
       <TextField
         label="Phone"
-        value={selectedGroupRow.phone}
+        value={selectedGroupRow.phone || ''}
         onChange={handleChange('phone')}
         size="small"
         fullWidth
@@ -65,10 +63,9 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
         sx={sharedSx}
       />
 
-      {/* Row 1: Billing Sys/Prin */}
       <TextField
         label="Billing Sys/Prin"
-        value={selectedGroupRow.billingSp}
+        value={selectedGroupRow.billingSp || ''}
         onChange={handleChange('billingSp')}
         size="small"
         fullWidth
@@ -82,11 +79,11 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
         sx={{
           backgroundColor: 'white',
           '& .MuiInputBase-root': {
-            height: '30px', // ⬆️ Increased from default (~36px)
+            height: '30px', 
             fontSize: '0.78rem',
           },
           '& .MuiSelect-select': {
-            padding: '8px 12px', // ⬆️ Vertical padding for taller field
+            padding: '8px 12px', 
             fontSize: '0.78rem',
             display: 'flex',
             alignItems: 'center',
@@ -113,17 +110,17 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
           size="small"
           sx={{
             backgroundColor: 'white',
-            minHeight: '34px',           // limit container height
+            minHeight: '34px',          
             '& .MuiFormLabel-root': {
-              fontSize: '0.78rem',       // smaller label
+              fontSize: '0.78rem',       
               lineHeight: '1rem',
             },
             '& .MuiInputBase-root': {
-              height: '30px',            // total height of select box
+              height: '30px',           
               fontSize: '0.78rem',
             },
             '& .MuiSelect-select': {
-              padding: '4px 8px',        // reduced padding inside dropdown
+              padding: '4px 8px',    
               fontSize: '0.78rem',
             },
             '& .Mui-disabled': {
@@ -154,7 +151,7 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
                 checked={!!selectedGroupRow.active}
                 onChange={handleCheckboxChange('active')}
                 disabled={!isEditable}
-                sx={{ padding: '2px' }}  // ⬇️ reduced checkbox padding
+                sx={{ padding: '2px' }}  
               />
             }
             label="Client Active"
@@ -164,7 +161,7 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
               mt: 0,
               mb: -1,
               lineHeight: 1,
-              minHeight: '24px', // ⬇️ constrain overall height
+              minHeight: '24px', 
               '& .MuiFormControlLabel-label': {
                 fontSize: '0.78rem',
                 color: 'black',
@@ -183,7 +180,7 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
                 checked={!!selectedGroupRow.positiveReports}
                 onChange={handleCheckboxChange('positiveReports')}
                 disabled={!isEditable}
-                sx={{ padding: '2px' }}  // ⬇️ reduced checkbox padding
+                sx={{ padding: '2px' }} 
               />
             }
             label="Positive Reporting"
@@ -193,7 +190,7 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
               mt: 0,
               mb: -1,
               lineHeight: 1,
-              minHeight: '24px', // ⬇️ constrain overall height
+              minHeight: '24px', 
               '& .MuiFormControlLabel-label': {
                 fontSize: '0.78rem',
                 color: 'black',
@@ -212,17 +209,17 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
                 checked={!!selectedGroupRow.subClientInd}
                 onChange={handleCheckboxChange('subClientInd')}
                 disabled={!isEditable}
-                sx={{ padding: '2px' }} // minimize checkbox spacing
+                sx={{ padding: '2px' }} 
               />
             }
             label="Sub Client"
             sx={{
               backgroundColor: 'white',
               pl: 1,
-              mt: 0,                // reduce top margin
-              mb: -1,                // reduce bottom margin
+              mt: 0,                
+              mb: -1,                
               '& .MuiFormControlLabel-label': {
-                fontSize: '0.78rem',     // smaller label
+                fontSize: '0.78rem',     
                 color: 'black',
                 lineHeight: '1rem',
               },
@@ -237,17 +234,17 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
                 checked={!!selectedGroupRow.excludeFromReport}
                 onChange={handleCheckboxChange('excludeFromReport')}
                 disabled={!isEditable}
-                sx={{ padding: '2px' }} // minimize checkbox spacing
+                sx={{ padding: '2px' }} 
               />
             }
             label="Exclude From Postage Reports"
             sx={{
               backgroundColor: 'white',
               pl: 1,
-              mt: 0,                // reduce top margin
-              mb: -1,                // reduce bottom margin
+              mt: 0,                
+              mb: -1,                
               '& .MuiFormControlLabel-label': {
-                fontSize: '0.78rem',     // smaller label
+                fontSize: '0.78rem', 
                 color: 'black',
                 lineHeight: '1rem',
               },
@@ -283,4 +280,4 @@ const ClientInformationB = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
   );
 };
 
-export default ClientInformationB;
+export default EditClientInformationB;

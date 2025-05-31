@@ -11,7 +11,7 @@ import {
   CButton,
 } from '@coreui/react';
 
-const ClientEmailSetup = ({ selectedGroupRow }) => {
+const EditClientEmailSetup = ({ selectedGroupRow, isEditable }) => {
   const [emailList, setEmailList] = useState([]);
   const [options, setOptions] = useState([]);
   const [selectedRecipients, setSelectedRecipients] = useState([]);
@@ -197,6 +197,7 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
                   size="6"
                   value={selectedRecipients}
                   onChange={(e) => handleChange(e.target.selectedOptions)}
+                  disabled={!isEditable}
                 >
                   {options.map((email, idx) => (
                     <option key={idx} value={email}>
@@ -214,6 +215,7 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
                 <CFormSelect
                   value={emailServer}
                   onChange={(e) => setEmailServer(e.target.value)}
+                  disabled={!isEditable}
                 >
                   <option value="">Select Email Server</option>
                   {emailServers.map((srv, idx) => (
@@ -226,6 +228,7 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
                   label="Recipient Active"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
+                  disabled={!isEditable}
                 />
               </CCol>
             </CRow>
@@ -237,6 +240,7 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
                 <CFormInput
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  disabled={!isEditable}
                   placeholder="Enter name"
                 />
               </CCol>
@@ -245,6 +249,7 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
                   label="CC"
                   checked={isCC}
                   onChange={(e) => setIsCC(e.target.checked)}
+                  disabled={!isEditable}
                 />
               </CCol>
             </CRow>
@@ -257,6 +262,7 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
                   value={emailAddress}
                   onChange={(e) => setEmailAddress(e.target.value)}
                   placeholder="Enter email address"
+                  disabled={!isEditable}
                 />
               </CCol>
             </CRow>
@@ -291,4 +297,4 @@ const ClientEmailSetup = ({ selectedGroupRow }) => {
   );
 };
 
-export default ClientEmailSetup;
+export default EditClientEmailSetup;

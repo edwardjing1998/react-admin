@@ -95,10 +95,10 @@ const NavigationPanel = ({
     {
       field: 'groupLabel',
       headerName: 'Clients',
-      colSpan: (params) => (params.data?.isGroup ? 2 : 1),
-      cellRenderer: (params) =>
+        colSpan: (params) => (params.data?.isGroup ? 2 : 1),
+        cellRenderer: (params) =>
         params.data?.isGroup ? params.data.groupLabel : '',
-      valueGetter: (params) =>
+        valueGetter: (params) =>
         params.data?.isGroup ? `${params.data.client} - ${params.data.name}` : '',
       flex: 0.5,
       minWidth: 80,
@@ -136,22 +136,23 @@ const NavigationPanel = ({
   };
 
   const handleRowClicked = (event) => {
-    const row = event.data;
-    if (row.isGroup && row.client) {
-      const clientId = row.client;
-      setExpandedGroups((prev) => {
-        const currentlyExpanded = prev[clientId] ?? false;
-        const newState = {};
-        clientList.forEach(client => {
-          newState[client.client] = false;
-        });
-        newState[clientId] = !currentlyExpanded;
-        return newState;
-      });
-      onRowClick(row);
-    } else if (!row.isGroup && row.client) {
-      onRowClick(row);
-    }
+
+        const row = event.data;
+        if (row.isGroup && row.client) {
+          const clientId = row.client;
+          setExpandedGroups((prev) => {
+            const currentlyExpanded = prev[clientId] ?? false;
+            const newState = {};
+            clientList.forEach(client => {
+              newState[client.client] = false;
+            });
+            newState[clientId] = !currentlyExpanded;
+            return newState;
+          });
+          onRowClick(row);
+          } else if (!row.isGroup && row.client) {
+            onRowClick(row);
+          }
   };
 
   return (

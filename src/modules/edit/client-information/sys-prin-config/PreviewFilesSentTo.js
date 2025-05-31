@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { CRow, CCol, CCard, CCardBody } from '@coreui/react';
 
 
-const PAGE_SIZE = 3; // 4x4 grid
+const PAGE_SIZE = 3;
 const COLUMNS = 4;
 
-const FilesSentTo = ({ data }) => {
+const PreviewFilesSentTo = ({ data }) => {
   const [page, setPage] = useState(0);
 
   const pageCount = Math.ceil((data?.length || 0) / PAGE_SIZE);
@@ -42,15 +42,6 @@ const FilesSentTo = ({ data }) => {
 
     <>
 
-      <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
-          <CCardBody
-          className="d-flex align-items-center"
-          style={{ padding: '0.25rem 0.5rem', height: '100%' }}
-          >
-          <span style={{ fontSize: '0.85rem' }}>File Sent To</span>
-          </CCardBody>
-      </CCard>
-
       <CCard style={{ height: '150px', marginBottom: '4px', marginTop: '15px' }}>
           <CCardBody
           className="d-flex align-items-center"
@@ -81,8 +72,8 @@ const FilesSentTo = ({ data }) => {
                 {/* Data Rows */}
                 {pageData.length > 0 ? (
                   pageData.map((item, index) => (
-                    <React.Fragment key={`${item.reportId}-${index}`}>
-                      <div style={cellStyle}>{item.reportDetails?.queryName?.trim() || ''}</div>
+                    <React.Fragment key={`${item.vendorId}-${index}`}>
+                      <div style={cellStyle}>{item.vendorName?.trim() || ''}</div>
                       {/*  <div style={cellStyle}>{item.receiveFlag ? 'Yes' : 'No'}</div>*/}
                       {/*<div style={cellStyle}>{item.reportDetails?.fileExt || ''}</div>*/}
                       {/*  <div style={cellStyle}>{item.outputTypeCd}</div>*/}
@@ -136,4 +127,4 @@ const FilesSentTo = ({ data }) => {
   );
 };
 
-export default FilesSentTo;
+export default PreviewFilesSentTo;

@@ -2,7 +2,7 @@ import React from 'react'
 import { CFormTextarea } from '@coreui/react'
 import { CCard, CCardBody } from '@coreui/react';
 
-const SysPrinNotes = ({ data }) => {
+const PreviewSysPrinNotes = ({ data }) => {
   return (
     <>
       <CCard style={{ height: '35px', marginBottom: '4px', marginTop: '15px' }}>
@@ -40,4 +40,4 @@ const SysPrinNotes = ({ data }) => {
   )
 }
 
-export default SysPrinNotes
+export default PreviewSysPrinNotes

@@ -5,9 +5,11 @@ import PreviewFilesSentTo from './PreviewFilesSentTo';
 import PreviewStatusOptions from './PreviewStatusOptions';
 import SysPrinEditButtonPanel from './SysPrinEditButtonPanel';
 import PreviewGeneralInformation from './PreviewGeneralInformation';
+import PreviewFilesSentToTabs from './PreviewFilesSentToTabs';
+import PreviewReMailOptions from './PreviewReMailOptions';
 
 
-const PreviewSysPrinInformation = ({ setEditClientWindow, selectedData, selectedGroupRow }) => {
+const PreviewSysPrinInformation = ({ setSysPrinInformationWindow, selectedData, selectedGroupRow }) => {
   
     const getStatusValue = (options, code) => {
         const index = parseInt(code, 10); // the `10` means base-10 (decimal)
@@ -25,8 +27,8 @@ const PreviewSysPrinInformation = ({ setEditClientWindow, selectedData, selected
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
-    if (newValue === 5 && typeof setEditClientWindow === 'function') {
-        setEditClientWindow(true);
+    if (newValue === 5 && typeof setSysPrinInformationWindow === 'function') {
+        setSysPrinInformationWindow(true);
       }
   };
   
@@ -69,11 +71,15 @@ const PreviewSysPrinInformation = ({ setEditClientWindow, selectedData, selected
             sharedSx={sharedSx}
             getStatusValue={getStatusValue}
           />
-    
-        <PreviewFilesSentTo data={selectedGroupRow?.reportOptions || []}  />  
-        <PreviewFilesReceivedFrom data={selectedGroupRow?.reportOptions || []} />
+          {/* Row 1: Billing Sys/Prin */}
+        {/* <PreviewFilesSentTo data={selectedData?.vendorSentTo || []}  /> */}
+        <PreviewFilesSentToTabs data={selectedData || []}  /> 
+        <PreviewReMailOptions
+            selectedData={selectedData}
+            sharedSx={sharedSx} />
         <PreviewSysPrinNotes data={selectedData || []} />
-        <SysPrinEditButtonPanel setEditClientWindow={setEditClientWindow} />
+        <SysPrinEditButtonPanel setSysPrinInformationWindow={setSysPrinInformationWindow} />
+        
     </>
   );
 };

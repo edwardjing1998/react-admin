@@ -36,7 +36,7 @@ const ClientInformationA = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
       <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 3, }}>
         <TextField
           label="Client ID"
-          value={selectedGroupRow.client}
+          value={selectedGroupRow.client || ''}
           onChange={handleChange('client')}
           size="small"
           fullWidth
@@ -45,7 +45,7 @@ const ClientInformationA = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
         />
         <TextField
           label="Name"
-          value={selectedGroupRow.name}
+          value={selectedGroupRow.name || ''}
           onChange={handleChange('name')}
           size="small"
           fullWidth
@@ -90,7 +90,7 @@ const ClientInformationA = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
         />
         <TextField
           label="Contact"
-          value={selectedGroupRow.contact}
+          value={selectedGroupRow.contact || ''}
           onChange={handleChange('contact')}
           size="small"
           fullWidth
@@ -99,7 +99,7 @@ const ClientInformationA = ({ selectedGroupRow, isEditable, setSelectedGroupRow 
         />
         <TextField
           label="Fax Number"
-          value={selectedGroupRow.faxNumber}
+          value={selectedGroupRow.faxNumber || ''}
           onChange={handleChange('faxNumber')}
           size="small"
           fullWidth

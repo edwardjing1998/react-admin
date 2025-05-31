@@ -15,6 +15,7 @@ import Drawer from '@mui/material/Drawer';
 import BusinessIcon from '@mui/icons-material/Business';
 import ComputerIcon from '@mui/icons-material/Computer';
 import PreviewClientInformation from './PreviewClientInformation'
+import SysPrin from './SysPrin'
 
 
 const SysPinConfig = () => {
@@ -134,6 +135,7 @@ const SysPinConfig = () => {
       sysPrins: sysPrinsList,
       sysPrin: rowData.sysPrin || '',
       invalidDelivAreas: specificInvalidDelivAreas,
+      vendorSentTo: matchedSysPrin?.vendorSentTo || [],
       notes: rowData.notes || matchedSysPrin?.notes || '',
       statA: rowData.statA || matchedSysPrin?.statA || '',
       statB: rowData.statB || matchedSysPrin?.statB || '',
@@ -252,7 +254,7 @@ const SysPinConfig = () => {
 
 
 
-      {/* Left Panel (30%) 
+      {/* Left Panel (30%) */}
       <CRow className="mb-3">
         <CCol xs={12}>
             <CCard className="h-100">
@@ -271,7 +273,7 @@ const SysPinConfig = () => {
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow> */}
+      </CRow> 
     </div>
   );
 };

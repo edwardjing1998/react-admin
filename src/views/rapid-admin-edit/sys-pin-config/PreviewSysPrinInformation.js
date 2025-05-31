@@ -740,7 +740,7 @@ const PreviewSysPrinInformation = ({ setEditClientWindow, selectedData, selected
                 style={{ padding: '0.25rem 0.5rem', height: '100%' }}
                 >
                 <div style={{ width: '100%', height: '100%' }}>
-                    <FilesSentTo data={selectedGroupRow?.reportOptions || []}  />
+                    <FilesSentTo data={selectedData?.vendorSentTo || []}  />
                 </div>
                 </CCardBody>
             </CCard>
@@ -812,7 +812,7 @@ const PreviewSysPrinInformation = ({ setEditClientWindow, selectedData, selected
                               size="small"
                               sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}
                             >
-                              New SysPrin
+                              New
                             </Button>
                           </div>
 

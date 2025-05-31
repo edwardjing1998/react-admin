@@ -13,11 +13,6 @@ export function mapRowDataToSelectedData(prev, rowData, atmCashPrefixes, clientE
         sp?.id?.sysPrin === rowData.sysPrin || sp?.sysPrin === rowData.sysPrin
     );
 
-    const specificInvalidDelivAreas = (matchedSysPrin?.invalidDelivAreas || []).map(area => ({
-        ...area,
-        sysPrin: matchedSysPrin?.id?.sysPrin || area.sysPrin,
-    }));
-
     return {
         ...prev,
         ...rowData,
@@ -26,7 +21,9 @@ export function mapRowDataToSelectedData(prev, rowData, atmCashPrefixes, clientE
         reportOptions: reportOptions,
         sysPrins: sysPrinsList,
         sysPrin: rowData.sysPrin || '',
-        invalidDelivAreas: specificInvalidDelivAreas,
+        invalidDelivAreas: matchedSysPrin?.invalidDelivAreas || [],
+        vendorReceivedFrom: matchedSysPrin?.vendorReceivedFrom || [],
+        vendorSentTo: matchedSysPrin?.vendorSentTo || [],
         notes: rowData.notes || matchedSysPrin?.notes || '',
         statA: rowData.statA || matchedSysPrin?.statA || '',
         statB: rowData.statB || matchedSysPrin?.statB || '',
@@ -49,6 +46,15 @@ export function mapRowDataToSelectedData(prev, rowData, atmCashPrefixes, clientE
         astatRch: rowData.astatRch || matchedSysPrin?.astatRch || '',
         active: rowData.active || matchedSysPrin?.active || '',
         nm13: rowData.nm13 || matchedSysPrin?.nm13 || '',
+        tempAway: rowData.tempAway || matchedSysPrin?.tempAway || '',
+        holdDays: rowData.holdDays || matchedSysPrin?.holdDays || '',
+        tempAwayAtts: rowData.tempAwayAtts || matchedSysPrin?.tempAwayAtts || '',
+        undeliverable: rowData.undeliverable || matchedSysPrin?.undeliverable || '',
+        forwardingAddress: rowData.forwardingAddress || matchedSysPrin?.forwardingAddress || '',
+        nonUS: rowData.nonUS || matchedSysPrin?.nonUS || '',
+        poBox: rowData.poBox || matchedSysPrin?.poBox || '',
+        badState: rowData.badState || matchedSysPrin?.badState || '',
+
     };
 }
 
@@ -74,6 +80,8 @@ export const defaultSelectedData = {
   sysPrins: [],
   sysPrin: '',
   invalidDelivAreas: [],
+  vendorReceivedFrom: [],
+  vendorSentTo: [],
   statA: '',
   statB: '',
   statC: '',

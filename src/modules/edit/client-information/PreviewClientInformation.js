@@ -10,7 +10,7 @@ import {  REPORT_BREAK_OPTIONS, SEARCH_TYPE_OPTIONS } from './utils/FieldValueMa
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox'
 
-const PreviewClientInformation = ({ selectedGroupRow, setEditClientWindow }) => {
+const PreviewClientInformation = ({ setClientInformationWindow , selectedGroupRow}) => {
 
       const [isEditable] = useState(false);
 
@@ -321,6 +321,7 @@ const PreviewClientInformation = ({ selectedGroupRow, setEditClientWindow }) => 
           <div>
             <Button
               variant="outlined"
+              onClick={() => setClientInformationWindow({ open: true, mode: 'delete' })}
               size="small"
               sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}
             >
@@ -328,7 +329,7 @@ const PreviewClientInformation = ({ selectedGroupRow, setEditClientWindow }) => 
             </Button>
             <Button
               variant="outlined"
-              onClick={() => setEditClientWindow(true)}
+              onClick={() => setClientInformationWindow({ open: true, mode: 'edit' })}
               size="small"
               sx={{ fontSize: '0.78rem', textTransform: 'none', marginRight: '6px' }}
             >
@@ -336,6 +337,7 @@ const PreviewClientInformation = ({ selectedGroupRow, setEditClientWindow }) => 
             </Button>
             <Button
               variant="outlined"
+              onClick={() => setClientInformationWindow({ open: true, mode: 'new' })}
               size="small"
               sx={{ fontSize: '0.78rem', marginRight: '6px', textTransform: 'none' }}
             >
