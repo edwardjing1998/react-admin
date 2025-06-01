@@ -75,15 +75,24 @@ const fetchGroupDetail = async (clientId) => {
   const [selectedData, setSelectedData] = useState(defaultSelectedData);
 
   useEffect(() => {
-    setClientList([]); // ✅ Clear old page data
-        fetchClientsPaging(currentPage, 25)
-            .then((data) => {
-            setClientList(data);
-            })
-            .catch((error) => {
-            console.error('Error fetching clients:', error);
+    // clear out the list immediately
+    setClientList([]);
+  
+    // wait 500 ms, then fire fetchClientsPaging(...)
+    const handle = setTimeout(() => {
+      fetchClientsPaging(currentPage, 25)
+        .then((data) => {
+          setClientList(data);
+        })
+        .catch((error) => {
+          console.error('Error fetching clients:', error);
         });
+    }, 500);
+  
+    // if `currentPage` changes again (or component unmounts) within 500 ms, cancel the pending fetch
+    return () => clearTimeout(handle);
   }, [currentPage]);
+  
 
 
   const [clientInformationWindow, setClientInformationWindow] = useState({ open: false, mode: 'edit' });
