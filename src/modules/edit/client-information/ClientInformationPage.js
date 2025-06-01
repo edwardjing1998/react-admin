@@ -37,8 +37,7 @@ const ClientInformationPage = () => {
   
   const [selectedData, setSelectedData] = useState(defaultSelectedData);
 
-  useEffect(() => {
-    setClientList([]); 
+  useEffect(() => { 
         fetchClientsPaging(currentPage, 25)
             .then((data) => {
             setClientList(data);
@@ -71,7 +70,7 @@ const ClientInformationPage = () => {
         selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList
       );
       setSelectedData(mappedData);
-    }, 0);
+    }, 100);
   };
   
 

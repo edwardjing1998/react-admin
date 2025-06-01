@@ -6,6 +6,8 @@ import { AgGridReact } from 'ag-grid-react';
 import '../../../scss/sys-prin-configuration/client-information.scss';
 import { FlattenClientData } from './utils/FlattenClientData';
 import { fetchClientsByPage, resetClientListService } from './utils/ClientService';
+import { useMemo } from 'react';
+
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -48,15 +50,13 @@ const NavigationPanel = ({
   }, [clientList]);
 
   // Flatten whenever dependencies change
-  useEffect(() => {
-    const flattened = FlattenClientData(
-      clientList,
-      selectedClient,
-      expandedGroups,
-      isWildcardMode
-    );
-    setTableData(flattened);
+  const flattenedData = useMemo(() => {
+    return FlattenClientData(clientList, selectedClient, expandedGroups, isWildcardMode);
   }, [clientList, selectedClient, expandedGroups, isWildcardMode]);
+  
+  useEffect(() => {
+    setTableData(flattenedData);
+  }, [flattenedData]);
 
   const goToNextPage = async () => {
     const nextPage = currentPage + 1;
