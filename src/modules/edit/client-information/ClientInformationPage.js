@@ -25,17 +25,31 @@ const ClientInformationPage = () => {
   const [isWildcardMode, setIsWildcardMode] = useState(false);
   const [selectedGroupRow, setSelectedGroupRow] = useState(null);
 
-const fetchGroupDetail = async (clientId) => {
-  try {
-    const response = await fetch(`/api/clients/${clientId}`); // Replace with actual API
-    const data = await response.json();
-    setSelectedGroupRow(data); // Now you’ll have full detail data!
-  } catch (error) {
-    console.error('Error fetching client detail:', error);
-  }
-};
-
-
+  const fetchGroupDetail = async (clientId) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+  
+    try {
+      const response = await fetch(`/api/clients/${clientId}`, {
+        signal: controller.signal, // connect signal to fetch
+      });
+      clearTimeout(timeoutId); // clear timeout on successful response
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      setSelectedGroupRow(data);
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.error('Fetch aborted due to timeout');
+      } else {
+        console.error('Error fetching client detail:', error);
+      }
+    }
+  };
+  
   const handleClientsFetched = (fetchedClients) => {
     setCurrentPage(0);
     setClientList(prev => {
@@ -47,17 +61,22 @@ const fetchGroupDetail = async (clientId) => {
 
   const handleRowClick = (rowData) => {
     if (rowData.isGroup) {
-      // “step 2” above already passed {…rowData} to us:
       setSelectedGroupRow(rowData);
       return;
     }
-    // otherwise it’s a leaf. We map it into “selectedData” for the right‐hand side.
+  
     const billingSp = rowData.billingSp || '';
     const matchedClient = clientList.find(c => c.billingSp === billingSp);
-    const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
-    const clientEmails = matchedClient?.clientEmail || [];
-    const reportOptions = matchedClient?.reportOptions || [];
-    const sysPrinsList = matchedClient?.sysPrins || [];
+    
+    if (!matchedClient) {
+      console.warn('No matching client found for billingSp:', billingSp);
+      return; // Skip further processing
+    }
+  
+    const atmCashPrefixes = matchedClient.sysPrinsPrefixes || [];
+    const clientEmails = matchedClient.clientEmail || [];
+    const reportOptions = matchedClient.reportOptions || [];
+    const sysPrinsList = matchedClient.sysPrins || [];
   
     const mappedData = mapRowDataToSelectedData(
       selectedData,
@@ -69,8 +88,6 @@ const fetchGroupDetail = async (clientId) => {
     );
     setSelectedData(mappedData);
   };
-  
-
   
   const [selectedData, setSelectedData] = useState(defaultSelectedData);
 
