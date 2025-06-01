@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { CCard, CCol, CRow } from '@coreui/react';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -6,7 +6,6 @@ import { AgGridReact } from 'ag-grid-react';
 import '../../../scss/sys-prin-configuration/client-information.scss';
 import { FlattenClientData } from './utils/FlattenClientData';
 import { fetchClientsByPage, resetClientListService } from './utils/ClientService';
-import { useMemo } from 'react';
 
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   CRow,
   CCol,
@@ -53,25 +53,34 @@ const ClientInformationPage = () => {
   const [sysPrinInformationWindow, setSysPrinInformationWindow] = useState({ open: false, mode: 'edit' });
 
 
-  const handleRowClick = (rowData) => {
-    setTimeout(() => {
-      if (rowData.isGroup) {
-        setSelectedGroupRow(rowData);
-        return;
-      }
-      const billingSp = rowData.billingSp || '';
-      const matchedClient = clientList.find(client => client.billingSp === billingSp);
-      const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
-      const clientEmails = matchedClient?.clientEmail || [];
-      const reportOptions = matchedClient?.reportOptions || [];
-      const sysPrinsList = matchedClient?.sysPrins || [];
+// Memoize a Map for quick lookup (billingSp -> client)
+const clientMap = useMemo(() => {
+    const map = new Map();
+    clientList.forEach(client => {
+      map.set(client.billingSp, client);
+    });
+    return map;
+  }, [clientList]);
   
-      const mappedData = mapRowDataToSelectedData(
-        selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList
-      );
-      setSelectedData(mappedData);
-    }, 100);
+  const handleRowClick = (rowData) => {
+    if (rowData.isGroup) {
+      setSelectedGroupRow(rowData);
+      return;
+    }
+  
+    const billingSp = rowData.billingSp || '';
+    const matchedClient = clientMap.get(billingSp);
+    const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
+    const clientEmails = matchedClient?.clientEmail || [];
+    const reportOptions = matchedClient?.reportOptions || [];
+    const sysPrinsList = matchedClient?.sysPrins || [];
+  
+    const mappedData = mapRowDataToSelectedData(
+      selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList
+    );
+    setSelectedData(mappedData);
   };
+  
   
 
   return (
