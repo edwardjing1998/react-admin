@@ -4,7 +4,7 @@ import { ModuleRegistry } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import '../../../scss/sys-prin-configuration/client-information.scss';
-import { FlattenClientData } from './utils/FlattenClientData'; // ✅ Import your new utility
+import { FlattenClientData } from './utils/FlattenClientData';
 import { fetchClientsByPage, resetClientListService } from './utils/ClientService';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -17,14 +17,13 @@ const NavigationPanel = ({
   setCurrentPage,
   isWildcardMode,
   setIsWildcardMode,
-  onFetchWildcardPage
+  onFetchWildcardPage,
 }) => {
   const [selectedClient, setSelectedClient] = useState('ALL');
   const [tableData, setTableData] = useState([]);
   const [pageSize] = useState(25);
   const [expandedGroups, setExpandedGroups] = useState({});
   const gridApiRef = useRef(null);
-
 
   const buttonStyle = {
     border: 'none',
@@ -36,31 +35,37 @@ const NavigationPanel = ({
     whiteSpace: 'nowrap',
   };
 
+  // Initialize expandedGroups keys whenever clientList changes
   useEffect(() => {
     setExpandedGroups((prev) => {
       const next = {};
-      clientList.forEach(client => {
-        const id = client.client;
-        next[id] = prev[id] ?? false;
+      clientList.forEach((client) => {
+        next[client.client] = prev[client.client] ?? false;
       });
       return next;
     });
   }, [clientList]);
 
-  // ✅ Use the imported flatten utility
+  // Flatten whenever dependencies change
   useEffect(() => {
-    const flattened = FlattenClientData(clientList, selectedClient, expandedGroups, isWildcardMode);
+    const flattened = FlattenClientData(
+      clientList,
+      selectedClient,
+      expandedGroups,
+      isWildcardMode
+    );
     setTableData(flattened);
-  }, [selectedClient, expandedGroups, clientList, isWildcardMode]);
+  }, [clientList, selectedClient, expandedGroups, isWildcardMode]);
 
   const goToNextPage = async () => {
     const nextPage = currentPage + 1;
     if (isWildcardMode && typeof onFetchWildcardPage === 'function') {
+      // If in wildcard mode, delegate to the parent callback
       onFetchWildcardPage(nextPage);
     } else {
       try {
         const data = await fetchClientsByPage(nextPage, pageSize);
-        setClientList([]);  // Clear old data
+        setClientList([]);       // clear old data first
         setClientList(data);
         setCurrentPage(nextPage);
       } catch (error) {
@@ -68,7 +73,7 @@ const NavigationPanel = ({
       }
     }
   };
-  
+
   const goToPreviousPage = () => {
     const previousPage = Math.max(0, currentPage - 1);
     if (isWildcardMode && typeof onFetchWildcardPage === 'function') {
@@ -81,7 +86,7 @@ const NavigationPanel = ({
   const resetClientList = async () => {
     try {
       const data = await resetClientListService(pageSize);
-      setClientList([]);  // Clear old data
+      setClientList([]); 
       setIsWildcardMode(false);
       setClientList(data);
       setCurrentPage(0);
@@ -89,16 +94,14 @@ const NavigationPanel = ({
       console.error('Reset fetch failed:', error);
     }
   };
-  
 
   const columnDefs = [
     {
       field: 'groupLabel',
       headerName: 'Clients',
-        colSpan: (params) => (params.data?.isGroup ? 2 : 1),
-        cellRenderer: (params) =>
-        params.data?.isGroup ? params.data.groupLabel : '',
-        valueGetter: (params) =>
+      colSpan: (params) => (params.data?.isGroup ? 2 : 1),
+      cellRenderer: (params) => (params.data?.isGroup ? params.data.groupLabel : ''),
+      valueGetter: (params) =>
         params.data?.isGroup ? `${params.data.client} - ${params.data.name}` : '',
       flex: 0.5,
       minWidth: 80,
@@ -113,13 +116,15 @@ const NavigationPanel = ({
         if (params.data?.isGroup) return '';
         return (
           <span>
-            <span role="img" aria-label="gear" style={{ marginRight: '6px' }}>⚙️</span>
+            <span role="img" aria-label="gear" style={{ marginRight: '6px' }}>
+              ⚙️
+            </span>
             {params.value}
           </span>
         );
       },
-      valueGetter: (params) => params.data?.isGroup ? '' : params.data.sysPrin,
-    }
+      valueGetter: (params) => (params.data?.isGroup ? '' : params.data.sysPrin),
+    },
   ];
 
   const defaultColDef = {
@@ -136,33 +141,47 @@ const NavigationPanel = ({
   };
 
   const handleRowClicked = (event) => {
+    const row = event.data;
 
-        const row = event.data;
-        if (row.isGroup && row.client) {
-          const clientId = row.client;
-          setExpandedGroups((prev) => {
-            const currentlyExpanded = prev[clientId] ?? false;
-            const newState = {};
-            clientList.forEach(client => {
-              newState[client.client] = false;
-            });
-            newState[clientId] = !currentlyExpanded;
-            return newState;
+    // Defer _all_ state updates and callbacks until after Ag-Grid finishes drawing
+    setTimeout(() => {
+      if (row.isGroup && row.client) {
+        const clientId = row.client;
+        setExpandedGroups((prev) => {
+          const currentlyExpanded = prev[clientId] ?? false;
+          const newState = {};
+          clientList.forEach((client) => {
+            newState[client.client] = false;
           });
-          onRowClick(row);
-          } else if (!row.isGroup && row.client) {
-            onRowClick(row);
-          }
+          newState[clientId] = !currentlyExpanded;
+          return newState;
+        });
+        // If onRowClick triggers parent state (which might redraw the grid), defer that too:
+        onRowClick(row);
+      } else if (!row.isGroup && row.client) {
+        onRowClick(row);
+      }
+    }, 10000);
   };
 
   return (
     <div className="d-flex flex-column h-100">
       <CRow className="flex-grow-1">
         <CCol xs={12} className="d-flex flex-column h-100">
-          <CCard className="flex-grow-1 d-flex flex-column" style={{ height: '1200px', border: 'none', boxShadow: 'none', overflow: 'hidden' }}>
+          <CCard
+            className="flex-grow-1 d-flex flex-column"
+            style={{
+              height: '1200px',
+              border: 'none',
+              boxShadow: 'none',
+              overflow: 'hidden',
+            }}
+          >
             <div style={{ flex: 1, overflow: 'hidden' }}>
-              <div className="ag-grid-container ag-theme-quartz no-grid-border"
-                style={{ height: '100%', width: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
+              <div
+                className="ag-grid-container ag-theme-quartz no-grid-border"
+                style={{ height: '100%', width: '100%', overflowY: 'auto', overflowX: 'hidden' }}
+              >
                 <AgGridReact
                   rowData={tableData}
                   columnDefs={columnDefs}
@@ -170,26 +189,62 @@ const NavigationPanel = ({
                   rowClassRules={rowClassRules}
                   pagination={false}
                   suppressScrollOnNewData={true}
-                  onGridReady={(params) => { gridApiRef.current = params.api; }}
+                  onGridReady={(params) => {
+                    gridApiRef.current = params.api;
+                  }}
                   animateRows={true}
                   onRowClicked={handleRowClicked}
                 />
               </div>
             </div>
-            <div style={{
-              padding: '4px', background: '#fafafa', display: 'flex',
-              justifyContent: 'center', alignItems: 'center',
-              columnGap: '4px', flexWrap: 'nowrap', overflowX: 'hidden'
-            }}>
+
+            <div
+              style={{
+                padding: '4px',
+                background: '#fafafa',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                columnGap: '4px',
+                flexWrap: 'nowrap',
+                overflowX: 'hidden',
+              }}
+            >
               {!isWildcardMode ? (
-                <div style={{ padding: '4px', textAlign: 'center', background: '#fafafa', display: 'flex', justifyContent: 'center', gap: '4px', flexWrap: 'nowrap', overflowX: 'hidden' }}>
-                  <button onClick={() => setCurrentPage(0)} style={buttonStyle}>⏮</button>
-                  <button onClick={goToPreviousPage} style={buttonStyle}>◀ Previous</button>
-                  <button onClick={goToNextPage} style={buttonStyle}>Next ▶</button>
-                  <button onClick={() => setCurrentPage(Math.ceil(clientList.length / pageSize) - 1)} style={buttonStyle}>⏭</button>
+                <div
+                  style={{
+                    padding: '4px',
+                    textAlign: 'center',
+                    background: '#fafafa',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '4px',
+                    flexWrap: 'nowrap',
+                    overflowX: 'hidden',
+                  }}
+                >
+                  <button onClick={() => setCurrentPage(0)} style={buttonStyle}>
+                    ⏮
+                  </button>
+                  <button onClick={goToPreviousPage} style={buttonStyle}>
+                    ◀ Previous
+                  </button>
+                  <button onClick={goToNextPage} style={buttonStyle}>
+                    Next ▶
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentPage(Math.ceil(clientList.length / pageSize) - 1)
+                    }
+                    style={buttonStyle}
+                  >
+                    ⏭
+                  </button>
                 </div>
               ) : (
-                <button onClick={resetClientList} style={buttonStyle}>🔁 Reset</button>
+                <button onClick={resetClientList} style={buttonStyle}>
+                  🔁 Reset
+                </button>
               )}
             </div>
           </CCard>
