@@ -18,6 +18,7 @@ const NavigationPanel = ({
   isWildcardMode,
   setIsWildcardMode,
   onFetchWildcardPage,
+  onFetchGroupDetails // ✅ New prop: Function to fetch selectedGroupRow
 }) => {
   const [selectedClient, setSelectedClient] = useState('ALL');
   const [tableData, setTableData] = useState([]);
@@ -140,29 +141,45 @@ const NavigationPanel = ({
     'client-group-row': (params) => params.data?.isGroup && params.data?.groupLevel === 1,
   };
 
-  const handleRowClicked = (event) => {
-    const row = event.data;
-
-    // Defer _all_ state updates and callbacks until after Ag-Grid finishes drawing
-    setTimeout(() => {
-      if (row.isGroup && row.client) {
-        const clientId = row.client;
-        setExpandedGroups((prev) => {
-          const currentlyExpanded = prev[clientId] ?? false;
-          const newState = {};
-          clientList.forEach((client) => {
-            newState[client.client] = false;
-          });
-          newState[clientId] = !currentlyExpanded;
-          return newState;
-        });
-        // If onRowClick triggers parent state (which might redraw the grid), defer that too:
-        onRowClick(row);
-      } else if (!row.isGroup && row.client) {
-        onRowClick(row);
-      }
-    }, 10000);
-  };
+   const handleRowClicked = (event) => {
+       const row = event.data;
+    
+       // Defer all state changes until after Ag-Grid finishes painting:
+       setTimeout(() => {
+         if (row.isGroup && row.client) {
+           const clientId = row.client;
+    
+           // 1) Toggle “” expansion for this group (collapsing all others):
+           setExpandedGroups((prev) => {
+             const currentlyExpanded = prev[clientId] ?? false;
+             const newState = {};
+             clientList.forEach((c) => {
+               newState[c.client] = false;
+             });
+             newState[clientId] = !currentlyExpanded;
+             return newState;
+           });
+    
+           // 2) Immediately tell the parent “a group row was clicked”:
+           //    so ClientInformationPage.selectedGroupRow is not null right away.
+           if (onRowClick) {
+             onRowClick({ ...row });
+           }
+    
+           // 3) Then fire off the real API call for full details:
+           if (onFetchGroupDetails) {
+             onFetchGroupDetails(clientId);
+           }
+    
+         } else if (!row.isGroup && row.client) {
+           // Leaf (non‐group) rows still just call onRowClick(row)
+           if (onRowClick) {
+             onRowClick(row);
+           }
+         }
+      }, 0);
+     };
+    
 
   return (
     <div className="d-flex flex-column h-100">

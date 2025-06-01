@@ -25,6 +25,17 @@ const ClientInformationPage = () => {
   const [isWildcardMode, setIsWildcardMode] = useState(false);
   const [selectedGroupRow, setSelectedGroupRow] = useState(null);
 
+const fetchGroupDetail = async (clientId) => {
+  try {
+    const response = await fetch(`/api/clients/${clientId}`); // Replace with actual API
+    const data = await response.json();
+    setSelectedGroupRow(data); // Now you’ll have full detail data!
+  } catch (error) {
+    console.error('Error fetching client detail:', error);
+  }
+};
+
+
   const handleClientsFetched = (fetchedClients) => {
     setCurrentPage(0);
     setClientList(prev => {
@@ -33,6 +44,32 @@ const ClientInformationPage = () => {
       return prevIds === newIds ? prev : fetchedClients;
     });
   };
+
+  const handleRowClick = (rowData) => {
+    if (rowData.isGroup) {
+      // “step 2” above already passed {…rowData} to us:
+      setSelectedGroupRow(rowData);
+      return;
+    }
+    // otherwise it’s a leaf. We map it into “selectedData” for the right‐hand side.
+    const billingSp = rowData.billingSp || '';
+    const matchedClient = clientList.find(c => c.billingSp === billingSp);
+    const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
+    const clientEmails = matchedClient?.clientEmail || [];
+    const reportOptions = matchedClient?.reportOptions || [];
+    const sysPrinsList = matchedClient?.sysPrins || [];
+  
+    const mappedData = mapRowDataToSelectedData(
+      selectedData,
+      rowData,
+      atmCashPrefixes,
+      clientEmails,
+      reportOptions,
+      sysPrinsList
+    );
+    setSelectedData(mappedData);
+  };
+  
 
   
   const [selectedData, setSelectedData] = useState(defaultSelectedData);
@@ -51,24 +88,6 @@ const ClientInformationPage = () => {
 
   const [clientInformationWindow, setClientInformationWindow] = useState({ open: false, mode: 'edit' });
   const [sysPrinInformationWindow, setSysPrinInformationWindow] = useState({ open: false, mode: 'edit' });
-
-
-  const handleRowClick = (rowData) => {
-    const billingSp = rowData.billingSp || '';
-    const matchedClient = clientList.find(client => client.billingSp === billingSp);
-    const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
-    const clientEmails = matchedClient?.clientEmail || [];
-    const reportOptions = matchedClient?.reportOptions || [];
-    const sysPrinsList = matchedClient?.sysPrins || [];
-
-    if (rowData.isGroup) {
-      setSelectedGroupRow(rowData); // ✅ save the group row
-      return; // optionally stop here if you don't want to overwrite selectedData
-    }
-
-    const mappedData = mapRowDataToSelectedData(selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList);
-    setSelectedData(mappedData);
-  };
 
   return (
     <div className="d-flex flex-column" style={{ height: '100vh', width: '80vw', overflow: 'auto' }}>
@@ -119,7 +138,8 @@ const ClientInformationPage = () => {
                     setCurrentPage={setCurrentPage}
                     isWildcardMode={isWildcardMode}
                     setIsWildcardMode={setIsWildcardMode}
-                    onFetchWildcardPage={fetchWildcardPage}                  
+                    onFetchWildcardPage={fetchWildcardPage}
+                    onFetchGroupDetails={fetchGroupDetail}                 
                   />
               </div>
             </CCardBody>
