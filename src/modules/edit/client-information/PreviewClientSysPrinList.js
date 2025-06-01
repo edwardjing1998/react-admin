@@ -10,11 +10,14 @@ const ClientAtmAndCashPrefixes = ({ data }) => {
   const pageCount = Math.ceil((data?.length || 0) / PAGE_SIZE);
   const pageData = data?.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE) || [];
 
+   {/* for testing purpose
   useEffect(() => {
     if (data && data.length > 0) {
-      console.info(JSON.stringify(data, null, 2));
+        setTimeout(() => {
+          console.info(JSON.stringify(data, null, 2));
+        }, 0);
     }
-  }, [data]);
+  }, [data]);*/}
 
   const hasData = data && data.length > 0;
 

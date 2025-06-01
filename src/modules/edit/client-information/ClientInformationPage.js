@@ -55,21 +55,25 @@ const ClientInformationPage = () => {
 
 
   const handleRowClick = (rowData) => {
-    const billingSp = rowData.billingSp || '';
-    const matchedClient = clientList.find(client => client.billingSp === billingSp);
-    const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
-    const clientEmails = matchedClient?.clientEmail || [];
-    const reportOptions = matchedClient?.reportOptions || [];
-    const sysPrinsList = matchedClient?.sysPrins || [];
-
-    if (rowData.isGroup) {
-      setSelectedGroupRow(rowData); // ✅ save the group row
-      return; // optionally stop here if you don't want to overwrite selectedData
-    }
-
-    const mappedData = mapRowDataToSelectedData(selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList);
-    setSelectedData(mappedData);
+    setTimeout(() => {
+      if (rowData.isGroup) {
+        setSelectedGroupRow(rowData);
+        return;
+      }
+      const billingSp = rowData.billingSp || '';
+      const matchedClient = clientList.find(client => client.billingSp === billingSp);
+      const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
+      const clientEmails = matchedClient?.clientEmail || [];
+      const reportOptions = matchedClient?.reportOptions || [];
+      const sysPrinsList = matchedClient?.sysPrins || [];
+  
+      const mappedData = mapRowDataToSelectedData(
+        selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList
+      );
+      setSelectedData(mappedData);
+    }, 0);
   };
+  
 
   return (
     <div className="d-flex flex-column" style={{ height: '100vh', width: '80vw', overflow: 'auto' }}>

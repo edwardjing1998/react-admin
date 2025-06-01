@@ -143,44 +143,35 @@ const NavigationPanel = ({
     'client-group-row': (params) => params.data?.isGroup && params.data?.groupLevel === 1,
   };
 
-   const handleRowClicked = (event) => {
-       const row = event.data;
-    
-       // Defer all state changes until after Ag-Grid finishes painting:
-       setTimeout(() => {
-         if (row.isGroup && row.client) {
-           const clientId = row.client;
-    
-           // 1) Toggle “” expansion for this group (collapsing all others):
-           setExpandedGroups((prev) => {
-             const currentlyExpanded = prev[clientId] ?? false;
-             const newState = {};
-             clientList.forEach((c) => {
-               newState[c.client] = false;
-             });
-             newState[clientId] = !currentlyExpanded;
-             return newState;
-           });
-    
-           // 2) Immediately tell the parent “a group row was clicked”:
-           //    so ClientInformationPage.selectedGroupRow is not null right away.
-           if (onRowClick) {
-             onRowClick({ ...row });
-           }
-    
-           // 3) Then fire off the real API call for full details:
-           if (onFetchGroupDetails) {
-             onFetchGroupDetails(clientId);
-           }
-    
-         } else if (!row.isGroup && row.client) {
-           // Leaf (non‐group) rows still just call onRowClick(row)
-           if (onRowClick) {
-             onRowClick(row);
-           }
-         }
-      }, 0);
-     };
+  const handleRowClicked = (event) => {
+    const row = event.data;
+    const clientId = row.client;
+  
+    setTimeout(() => {
+      if (row.isGroup && clientId) {
+        setExpandedGroups((prev) => {
+          const currentlyExpanded = prev[clientId] ?? false;
+          const newState = {};
+          clientList.forEach((c) => {
+            newState[c.client] = false;
+          });
+          newState[clientId] = !currentlyExpanded;
+          return newState;
+        });
+  
+        // 🟢 Defer onRowClick and onFetchGroupDetails
+        setTimeout(() => {
+          if (onRowClick) onRowClick({ ...row });
+          if (onFetchGroupDetails) onFetchGroupDetails(clientId);
+        }, 0);
+      } else if (!row.isGroup && clientId) {
+        setTimeout(() => {
+          if (onRowClick) onRowClick(row);
+        }, 0);
+      }
+    }, 0);
+  };
+  
     
 
   return (
