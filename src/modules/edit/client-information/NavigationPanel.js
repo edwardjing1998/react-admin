@@ -71,6 +71,8 @@ const NavigationPanel = ({
         setCurrentPage(nextPage);
       } catch (error) {
         console.error('Error fetching clients:', error);
+        alert(`Error fetching client details: ${error.message}`);
+
       }
     }
   };

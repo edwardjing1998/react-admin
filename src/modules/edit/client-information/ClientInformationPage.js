@@ -25,31 +25,6 @@ const ClientInformationPage = () => {
   const [isWildcardMode, setIsWildcardMode] = useState(false);
   const [selectedGroupRow, setSelectedGroupRow] = useState(null);
 
-  const fetchGroupDetail = async (clientId) => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
-  
-    try {
-      const response = await fetch(`/api/clients/${clientId}`, {
-        signal: controller.signal, // connect signal to fetch
-      });
-      clearTimeout(timeoutId); // clear timeout on successful response
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      setSelectedGroupRow(data);
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        console.error('Fetch aborted due to timeout');
-      } else {
-        console.error('Error fetching client detail:', error);
-      }
-    }
-  };
-  
   const handleClientsFetched = (fetchedClients) => {
     setCurrentPage(0);
     setClientList(prev => {
@@ -59,61 +34,42 @@ const ClientInformationPage = () => {
     });
   };
 
-  const handleRowClick = (rowData) => {
-    if (rowData.isGroup) {
-      setSelectedGroupRow(rowData);
-      return;
-    }
-  
-    const billingSp = rowData.billingSp || '';
-    const matchedClient = clientList.find(c => c.billingSp === billingSp);
-    
-    if (!matchedClient) {
-      console.warn('No matching client found for billingSp:', billingSp);
-      return; // Skip further processing
-    }
-  
-    const atmCashPrefixes = matchedClient.sysPrinsPrefixes || [];
-    const clientEmails = matchedClient.clientEmail || [];
-    const reportOptions = matchedClient.reportOptions || [];
-    const sysPrinsList = matchedClient.sysPrins || [];
-  
-    const mappedData = mapRowDataToSelectedData(
-      selectedData,
-      rowData,
-      atmCashPrefixes,
-      clientEmails,
-      reportOptions,
-      sysPrinsList
-    );
-    setSelectedData(mappedData);
-  };
   
   const [selectedData, setSelectedData] = useState(defaultSelectedData);
 
   useEffect(() => {
-    // clear out the list immediately
-    setClientList([]);
-  
-    // wait 500 ms, then fire fetchClientsPaging(...)
-    const handle = setTimeout(() => {
-      fetchClientsPaging(currentPage, 25)
-        .then((data) => {
-          setClientList(data);
-        })
-        .catch((error) => {
-          console.error('Error fetching clients:', error);
+    setClientList([]); 
+        fetchClientsPaging(currentPage, 25)
+            .then((data) => {
+            setClientList(data);
+            })
+            .catch((error) => {
+            console.error('Error fetching clients:', error);
+            alert(`Error fetching client details: ${error.message}`);
         });
-    }, 500);
-  
-    // if `currentPage` changes again (or component unmounts) within 500 ms, cancel the pending fetch
-    return () => clearTimeout(handle);
   }, [currentPage]);
-  
 
 
   const [clientInformationWindow, setClientInformationWindow] = useState({ open: false, mode: 'edit' });
   const [sysPrinInformationWindow, setSysPrinInformationWindow] = useState({ open: false, mode: 'edit' });
+
+
+  const handleRowClick = (rowData) => {
+    const billingSp = rowData.billingSp || '';
+    const matchedClient = clientList.find(client => client.billingSp === billingSp);
+    const atmCashPrefixes = matchedClient?.sysPrinsPrefixes || [];
+    const clientEmails = matchedClient?.clientEmail || [];
+    const reportOptions = matchedClient?.reportOptions || [];
+    const sysPrinsList = matchedClient?.sysPrins || [];
+
+    if (rowData.isGroup) {
+      setSelectedGroupRow(rowData); // ✅ save the group row
+      return; // optionally stop here if you don't want to overwrite selectedData
+    }
+
+    const mappedData = mapRowDataToSelectedData(selectedData, rowData, atmCashPrefixes, clientEmails, reportOptions, sysPrinsList);
+    setSelectedData(mappedData);
+  };
 
   return (
     <div className="d-flex flex-column" style={{ height: '100vh', width: '80vw', overflow: 'auto' }}>
@@ -165,7 +121,7 @@ const ClientInformationPage = () => {
                     isWildcardMode={isWildcardMode}
                     setIsWildcardMode={setIsWildcardMode}
                     onFetchWildcardPage={fetchWildcardPage}
-                    onFetchGroupDetails={fetchGroupDetail}                 
+                                      
                   />
               </div>
             </CCardBody>
